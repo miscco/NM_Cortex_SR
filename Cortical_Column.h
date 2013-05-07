@@ -15,21 +15,21 @@ class Cortical_Column {
 public:
 	// Constructors
 	Cortical_Column(void)
-	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),
+	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	m_KS	(_INIT(0.0)),	h_A		(_INIT(0.0)),
 	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
 	  Phi_ep(_INIT(0.0)),	phi_e	(_INIT(0.0)),
 	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  x_ep 	(_INIT(0.0)),	y_e  	(_INIT(0.0)),	theta 	(_INIT(theta_e)),
+	  x_ep 	(_INIT(0.0)),	y_e  	(_INIT(0.0)),	theta 	(_INIT(Na_eq)),
 	  N_ee  (40), 			N_ei   	(40), 		  	N_ie	(80),		   	N_ii 	(80),
 	  N_ep  (40)
 	{}
 
 	Cortical_Column(double* Con)
-	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),
+	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	m_KS	(_INIT(0.0)),	h_A		(_INIT(0.0)),
 	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
 	  Phi_ep(_INIT(0.0)),	phi_e	(_INIT(0.0)),
 	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  x_ep 	(_INIT(0.0)),	y_e  	(_INIT(0.0)),	theta 	(_INIT(theta_e)),
+	  x_ep 	(_INIT(0.0)),	y_e  	(_INIT(0.0)),	theta 	(_INIT(Na_eq)),
 	  N_ee  (Con[0]), 	 	N_ei	(Con[1]), 	  	N_ie	(Con[2]),	   	N_ii 	(Con[3]),
 	  N_ep  (Con[4])
 	{}
@@ -47,20 +47,33 @@ public:
 	// current functions
 	double 	I_L_e		(int) const;
 	double 	I_L_i		(int) const;
+	double 	I_KS		(int) const;
+	double 	I_A			(int) const;
+	double 	I_AR		(int) const;
+	double 	I_KNa		(int) const;
+	double 	Na_pump		(int) const;
+
+	// gating functions
+	double 	m_inf_KS	(int) const;
+	double 	tau_m_KS	(int) const;
+	double 	h_inf_A		(int) const;
+
 
 	// noise functions
 	double 	noise_xRK 	(int, double, double) const;
 
 	// ODE functions
-	void 	set_RK		(int, _REPEAT(double, 2));
-	void 	add_RK	 	(_REPEAT(double, 1));
+	void 	set_RK		(int, _REPEAT(double, 4));
+	void 	add_RK	 	(_REPEAT(double, 2));
 
-	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 2));
+	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 3));
 
 private:
 	// population variables
 	vector<double> 	Ve,			// exitatory 		  membrane voltage
 					Vi,			// exitatory 		  membrane voltage
+					m_KS,		// activation 	of KS channel
+					h_A,		// activation 	of A  channel
 					Phi_ee,		// PostSP from exitatory  		  to exitatory  		population
 					Phi_ei,		// PostSP from exitatory  		  to inhibitory 		population
 					Phi_ie,		// PostSP from inhibitory 		  to exitatory  		population

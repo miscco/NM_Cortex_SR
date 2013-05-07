@@ -47,6 +47,8 @@ vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int 
 	int mode 	= 0;
 	int count 	= 0;
 
+	double strength = str+mean;
+
 	// initializing the rando number generator
 	mtrand.seed();
 	// generating random noise for the whole time length
@@ -64,7 +66,7 @@ vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int 
 			dW[i] = mtrand.randNorm(mean,sqrt(sd));
 			break;
 		case 1:
-			dW[i] = mtrand.randNorm(str,sqrt(sd));
+			dW[i] = mtrand.randNorm(strength,sqrt(sd));
 			break;
 		}
 	}

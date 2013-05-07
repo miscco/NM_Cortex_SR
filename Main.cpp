@@ -26,6 +26,8 @@ int main(void) {
 	// creating the random input
 	vector<double> u_e1 = rand_var(mtrand, T*res, phi_sc, phi_sc);
 	vector<double> u_e2 = rand_var(mtrand, T*res, phi_sc, phi_sc);
+	vector<double> u_i1 = rand_var(mtrand, T*res, phi_sc, phi_sc);
+	vector<double> u_i2 = rand_var(mtrand, T*res, phi_sc, phi_sc);
 
 	// Initializing the populations;
 	Cortical_Column Col;
@@ -36,7 +38,7 @@ int main(void) {
 
 	// simulation
 	for (int t=0; t< T*res; ++t) {
-		ODE (Col, u_e1[t], u_e2[t]);
+		ODE (Col, u_e1[t], u_e2[t], u_i1[t], u_i2[t]);
 	}
 
 	time (&end);
