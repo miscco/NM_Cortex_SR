@@ -32,13 +32,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	const int Time 			= (T+onset)*res;
 
 	// creating the random input
-	//vector<double> u_e1 = rand_var(mtrand, Time, phi_sc, phi_sc);
-	//vector<double> u_e2 = rand_var(mtrand, Time, phi_sc, phi_sc);
+	vector<double> u_e1 = rand_var(mtrand, Time, phi_sc, phi_sc);
+	vector<double> u_e2 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i1 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i2 = rand_var(mtrand, Time, phi_sc, phi_sc);
 
-	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
-	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
+	//vector<double> u_e1 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
+	//vector<double> u_e2 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
 
 	// Initializing the populations;
 	Cortical_Column Col(Connectivity);
@@ -46,7 +46,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	// setting up the data containers
 	vector<double> Ve 	 	(T*res);
 	vector<double> Vi 	 	(T*res);
-	vector<double> Phi_ep 	(T*res);
+	vector<double> Na 		(T*res);
+	vector<double> I_KS 	(T*res);
+	vector<double> I_A 		(T*res);
+	vector<double> I_KNa 	(T*res);
 
 	int count = 0;
 
@@ -54,15 +57,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	for (int t=0; t<Time; ++t) {
 		ODE (Col, u_e1[t], u_e2[t], u_i1[t], u_i2[t]);
 		if(t>=onset*res){
-		get_data(count, Col, Ve, Vi, Phi_ep);
+		get_data(count, Col, Ve, Vi, Na, I_KS, I_A, I_KNa);
 		++count;
 		}
 	}
 
 	plhs[0]  = getMexArray(Ve);
 	plhs[1]  = getMexArray(Vi);
-	plhs[2]  = getMexArray(Phi_ep);
-	plhs[3]  = getMexArray(u_e1);
+	plhs[2]  = getMexArray(Na);
+	plhs[3]  = getMexArray(I_KS);
+	plhs[4]  = getMexArray(I_A);
+	plhs[5]  = getMexArray(I_KNa);
 
 	return;
 }
