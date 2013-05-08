@@ -8,9 +8,9 @@ if nargin == 0
                40;             % N_ei
                80;             % N_ie
                80;             % N_ii
-               80];            % N_ep (long range)
+               30];            % N_ep (long range)
            
-    T       = 100;              % duration of the simulation
+    T       = 10;              % duration of the simulation
     onset   = 10;               % time until data is saved
 end
 
@@ -20,15 +20,23 @@ L           = max(size(Ve));
 fs          = L/T;
 timeaxis    = linspace(0,T,L);
 
+ImageFontSize=16;
+TitleFontSize=20;
+AxisFontName='CMU Serif';
+
 figure(1)
-subplot(311), plot(timeaxis,Ve)
-title('membrane potential of exitatory  population'),         xlabel('time in s'), ylabel('V_{e} in mV'), axis tight
-subplot(312), plot(timeaxis,I_KS)
-title('membrane potential of inhibitory population'),         xlabel('time in s'), ylabel('V_{i} in mV'), axis tight
-subplot(313), plot(timeaxis, I_A)
-title('I_{KNa} current'),         xlabel('time in s'), ylabel('I_{KNa} in \muA'), axis tight
-%exportfig(gcf, 'TC_full.png', 'Format', 'png', 'height', 11, 'Color', 'rgb', 'FontMode', 'fixed', 'FontSize', 22)
-% 
+set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize,'XTick',[0:0.5:4])
+subplot(211), plot(timeaxis,Ve)
+title('membrane potential of exitatory  population','FontSize',TitleFontSize),         
+xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in mV','FontSize',ImageFontSize), axis tight
+
+
+subplot(212), plot(timeaxis,I_KNa)
+title('I_{KNa} current','FontSize',TitleFontSize),         
+xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{KNa} in \muA','FontSize',ImageFontSize), axis tight
+
+%exportfig(gcf, 'C_KNa_short.png', 'Format', 'png', 'width', 12.8, 'Color', 'rgb')
+ 
 % fs      = L/T;
 % [Pxx,f] = pwelch(Ve-mean(Ve),[], [], [], fs);
 % n       = find(f<=60, 1, 'last' );
