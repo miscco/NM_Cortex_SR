@@ -52,13 +52,16 @@ public:
 	double 	I_A			(int) const;
 	double 	I_KNa		(int) const;
 	double 	I_KS		(int) const;
-	double 	Na_pump		(int) const;
+	double 	I_NaP		(int) const;
+	double 	I_AR 		(int) const;
 
 	// gating functions
 	double 	h_inf_A		(int) const;
 	double 	m_inf_KS	(int) const;
 	double 	tau_m_KS	(int) const;
 
+	// natrium pump
+	double 	Na_pump		(int) const;
 
 	// noise functions
 	double 	noise_xRK 	(int, double, double) const;

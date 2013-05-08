@@ -78,14 +78,14 @@ double Cortical_Column::I_L_i	(int N) const{
 double Cortical_Column::I_A			(int N)  const{
 	_SWITCH((Ve)(h_A))
 	double m_inf_A 	= 1/(1+exp(-(var_Ve+50)/20));
-	double I_A 		= g_A * pow(m_inf_A, 3) * var_h_A * (var_Ve - V_K);
+	double I_A 		= g_A * pow(m_inf_A, 3) * var_h_A * (var_Ve - E_K);
 	return I_A;
 }
 
 // potassium rectifying current
 double Cortical_Column::I_KS		(int N)  const{
 	_SWITCH((Ve)(m_KS))
-	double I_KS  = g_KS * var_m_KS	* (var_Ve - V_K);
+	double I_KS  = g_KS * var_m_KS	* (var_Ve - E_K);
 	return I_KS;
 }
 
@@ -93,8 +93,24 @@ double Cortical_Column::I_KS		(int N)  const{
 double Cortical_Column::I_KNa		(int N)  const{
 	_SWITCH((Ve)(Na))
 	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
-	double I_KNa  = g_KNa * w_KNa * (var_Ve - V_K);
+	double I_KNa  = g_KNa * w_KNa * (var_Ve - E_K);
 	return I_KNa;
+}
+
+// persistent natrium current
+double Cortical_Column::I_NaP	(int N)  const{
+	_SWITCH((Ve))
+	double m_inf_NaP 	= 1/(1+exp(-(var_Ve+55.7)/7.7));
+	double I_NaP 		= g_NaP * pow(m_inf_NaP, 3)  * (var_Ve - E_Na);
+	return I_NaP;
+}
+
+// inward rectifier current
+double Cortical_Column::I_AR	(int N)  const{
+	_SWITCH((Ve))
+	double h_inf_AR  	= 1/(1+exp( (var_Ve+75)/4));
+	double I_AR  		= g_AR * h_inf_AR * (var_Ve - E_K);
+	return I_AR;
 }
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
@@ -102,28 +118,28 @@ double Cortical_Column::I_KNa		(int N)  const{
 
 
 /*****************************************************************************************************/
-/**********************************		 I_KS gating functions		**********************************/
+/**********************************		 activation functions		**********************************/
 /*****************************************************************************************************/
-// potassium rectifying current activation time constant
-double Cortical_Column::tau_m_KS	(int N) const{
-	_SWITCH((Ve))
-	double tau_m_KS = 16/(exp( (var_Ve+55)/30) + exp(-(var_Ve+55)/30));
-	return tau_m_KS;
-}
-
 // potassium rectifying current activation variable
 double Cortical_Column::m_inf_KS	(int N) const{
 	_SWITCH((Ve))
 	double m_inf_KS = 1/(1+exp(-(var_Ve+34)/6.5));
 	return m_inf_KS;
 }
+
+// potassium rectifying current activation time constant
+double Cortical_Column::tau_m_KS	(int N) const{
+	_SWITCH((Ve))
+	double tau_m_KS = 16/(exp( (var_Ve+55)/30) + exp(-(var_Ve+55)/30));
+	return tau_m_KS;
+}
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
 /*****************************************************************************************************/
 
 
 /*****************************************************************************************************/
-/**********************************		 I_A gating functions		**********************************/
+/**********************************		 inactivation functions		**********************************/
 /*****************************************************************************************************/
 // A-type current inactivation h_A_inf
 double Cortical_Column::h_inf_A		(int N) const{
@@ -173,7 +189,7 @@ void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, dou
 	_SWITCH((h_A)	(m_KS)
 			(Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)(phi_e)
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii)	(y_e))
-	Ve	  	[N] = dt/tau_e * ( psi_ee(N) * var_Phi_ee + psi_ie(N) * var_Phi_ie	- c * (I_L_e(N) + I_A(N) + I_KNa(N)));
+	Ve	  	[N] = dt/tau_e * ( psi_ee(N) * var_Phi_ee + psi_ie(N) * var_Phi_ie	- c * (I_L_e(N) + I_NaP(N) + I_KS(N) + I_AR(N) + I_A(N) + I_KNa(N)));
 	Vi	  	[N] = dt/tau_i * ( psi_ei(N) * var_Phi_ei + psi_ii(N) * var_Phi_ii	- c * (I_L_i(N)));
 	Na		[N] = dt*(lambda* get_Qe(N) - Na_pump(N));
 	h_A 	[N] = dt*(h_inf_A (N) - var_h_A )/tau_h_A;
