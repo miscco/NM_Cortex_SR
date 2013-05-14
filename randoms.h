@@ -7,6 +7,9 @@
 #include "MersenneTwister.h"
 using std::vector;
 
+/*****************************************************************************************************/
+/*****************************		parameters for integration of SRK4		**************************/
+/*****************************************************************************************************/
 // vectors needed for stochastic RK
 extern const vector<double> B1 = {0,
 								  0.626708569400000081728308032325,
@@ -16,7 +19,14 @@ extern const vector<double> B2 = {0,
 								  0.78000033203198970710445792065002,
 								  1.28727807507536762265942797967,
 								  0.44477273249350995909523476257164};
+/*****************************************************************************************************/
+/**********************************		 		end			 		**********************************/
+/*****************************************************************************************************/
 
+
+/*****************************************************************************************************/
+/**********************************		random input generation		**********************************/
+/*****************************************************************************************************/
 // function that creates a vector of random numbers with length N and SD sigma
 vector<double> rand_var (MTRand mtrand, int length, double mean, double sd) {
 	// length	length of the simulation
@@ -30,7 +40,14 @@ vector<double> rand_var (MTRand mtrand, int length, double mean, double sd) {
 	}
 	return dW;
 }
+/*****************************************************************************************************/
+/**********************************		 		end			 		**********************************/
+/*****************************************************************************************************/
 
+
+/*****************************************************************************************************/
+/****************************		random input generation with stim		**************************/
+/*****************************************************************************************************/
 // function that creates a vector of random numbers with length N, given mean and standard deviation
 // together with pulses of increased mean with frequency f and strength str
 vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int len, double mean, double sd, double str) {
@@ -47,7 +64,7 @@ vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int 
 	int mode 	= 0;
 	int count 	= 0;
 
-	double strength = str+mean;
+	double strength = mean + str;
 
 	// initializing the rando number generator
 	mtrand.seed();
@@ -72,3 +89,54 @@ vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int 
 	}
 	return dW;
 }
+/*****************************************************************************************************/
+/**********************************		 		end			 		**********************************/
+/*****************************************************************************************************/
+
+
+/*****************************************************************************************************/
+/****************************			phase dependent stimulation			**************************/
+/*****************************************************************************************************/
+class Stimulation {
+public:
+	Stimulation(double strength, int delay, int duration, int number, int res, int T, int onset)
+	: stim	(0), 	 	counter	(0),
+	  str	(strength),	del		(delay), dur		(duration), num		(number),
+	  Tsim	(T*res),	Tstart(onset*res)
+	{}
+
+	void Start	(vector<double>& Ve, vector<double>& noise1, vector<double>& noise2, int t) {
+		if(stim == 0 && Ve[t]<=-70 && (t+ 2 * num *del)<Tsim) {
+			std::cout << t << "\n";
+			stim 		= 1;
+			counter 	= t + 6 * del;
+			for (int i=0; i<num; ++i){
+				for (int j=0; j<dur; ++j){
+					noise1[t + Tstart + (2*i+1)*del + j]	= noise1[t + Tstart + (2*i+1)*del + j] + str;
+					noise2[t + Tstart + (2*i+1)*del + j]	= noise2[t + Tstart + (2*i+1)*del + j] + str;
+				}
+			}
+		}
+
+		if(stim==1 && counter ==t){
+			stim = 0;
+		}
+	};
+
+private:
+	// helping variables
+	bool 	stim;
+
+	int 	counter;
+
+	// stimulation parameters
+	double	str;
+	int 	del,
+			dur,
+			num,
+			Tsim,
+			Tstart;
+};
+/*****************************************************************************************************/
+/**********************************		 		end			 		**********************************/
+/*****************************************************************************************************/

@@ -32,13 +32,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	const int Time 			= (T+onset)*res;
 
 	// creating the random input
-	vector<double> u_e1 = rand_var(mtrand, Time, phi_sc, phi_sc);
-	vector<double> u_e2 = rand_var(mtrand, Time, phi_sc, phi_sc);
+	//vector<double> u_e1 = rand_var(mtrand, Time, phi_sc, phi_sc);
+	//vector<double> u_e2 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i1 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i2 = rand_var(mtrand, Time, phi_sc, phi_sc);
 
-	//vector<double> u_e1 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
-	//vector<double> u_e2 = rand_inp(mtrand, res, T, onset, 5, 5E2, phi_sc, phi_sc, phi_inp);
+	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, 10, 50E1, phi_sc, phi_sc, phi_inp);
+	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, 10, 50E1, phi_sc, phi_sc, phi_inp);
 
 	// Initializing the populations;
 	Cortical_Column Col(Connectivity);
@@ -68,6 +68,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	plhs[3]  = getMexArray(I_KS);
 	plhs[4]  = getMexArray(I_A);
 	plhs[5]  = getMexArray(I_KNa);
-
+	plhs[6]  = getMexArray(u_e1);
 	return;
 }

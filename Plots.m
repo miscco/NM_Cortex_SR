@@ -8,17 +8,19 @@ if nargin == 0
                     40;             % N_ei
                     80;             % N_ie
                     80;             % N_ii
-                    40];            % N_ep (long range)
+                    35];            % N_ep (long range)
            
     T          = 100;              % duration of the simulation
     onset   = 20;               % time until data is saved
 end
 
-[Ve, Vi, Na, I_KS, I_A, I_KNa]    = Cortex(Con, T, onset);
+[Ve, Vi, Na, I_KS, I_A, I_KNa, noise]    = Cortex(Con, T, onset);
 
 L           = max(size(Ve));
 fs          = L/T;
 timeaxis    = linspace(0,T,L);
+
+noise = noise(onset*fs+1:end);
 
 ImageFontSize=16;
 TitleFontSize=20;
@@ -30,7 +32,7 @@ subplot(211), plot(timeaxis,Ve)
 title('membrane potential of exitatory  population','FontSize',TitleFontSize),         
 xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in mV','FontSize',ImageFontSize), axis tight
 
-subplot(212), plot(timeaxis,Na)
+subplot(212), plot(timeaxis,noise)
 title('membrane potential of inhibitory  population','FontSize',TitleFontSize),         
 xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{i} in mV','FontSize',ImageFontSize), axis tight
 

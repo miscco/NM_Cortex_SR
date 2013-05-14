@@ -60,7 +60,7 @@ public:
 	double 	m_inf_KS	(int) const;
 	double 	tau_m_KS	(int) const;
 
-	// natrium pump
+	// potassium concentration
 	double 	Na_pump		(int) const;
 
 	// noise functions
