@@ -186,10 +186,10 @@ double Cortical_Column::noise_xRK(int N, double u_1, double u_2) const{
 // function that calculates the Nth RK term
 void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, double u_i2) {
 	extern const double dt;
-	_SWITCH((h_A)	(m_KS)
+	_SWITCH((Na)	(h_A)	(m_KS)
 			(Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)(phi_e)
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii)	(y_e))
-	Ve	  	[N] = dt/tau_e * ( psi_ee(N) * var_Phi_ee + psi_ie(N) * var_Phi_ie	- c * (I_L_e(N) + I_NaP(N) + I_KS(N) + I_AR(N) + I_A(N) + I_KNa(N)));
+	Ve	  	[N] = dt/tau_e * ( psi_ee(N) * var_Phi_ee + psi_ie(N) * var_Phi_ie	- c * (I_L_e(N) + I_KNa(N)));
 	Vi	  	[N] = dt/tau_i * ( psi_ei(N) * var_Phi_ei + psi_ii(N) * var_Phi_ii	- c * (I_L_i(N)));
 	Na		[N] = dt*(lambda* get_Qe(N) - Na_pump(N));
 	h_A 	[N] = dt*(h_inf_A (N) - var_h_A )/tau_h_A;

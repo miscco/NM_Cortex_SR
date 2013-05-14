@@ -5,13 +5,13 @@ function Plots(T, onset, Con)
 
 if nargin == 0
     Con     = [40;             % N_ee
-               40;             % N_ei
-               80;             % N_ie
-               80;             % N_ii
-               30];            % N_ep (long range)
+                    40;             % N_ei
+                    80;             % N_ie
+                    80;             % N_ii
+                    40];            % N_ep (long range)
            
-    T       = 10;              % duration of the simulation
-    onset   = 10;               % time until data is saved
+    T          = 100;              % duration of the simulation
+    onset   = 20;               % time until data is saved
 end
 
 [Ve, Vi, Na, I_KS, I_A, I_KNa]    = Cortex(Con, T, onset);
@@ -30,10 +30,10 @@ subplot(211), plot(timeaxis,Ve)
 title('membrane potential of exitatory  population','FontSize',TitleFontSize),         
 xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in mV','FontSize',ImageFontSize), axis tight
 
+subplot(212), plot(timeaxis,Na)
+title('membrane potential of inhibitory  population','FontSize',TitleFontSize),         
+xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{i} in mV','FontSize',ImageFontSize), axis tight
 
-subplot(212), plot(timeaxis,I_KNa)
-title('I_{KNa} current','FontSize',TitleFontSize),         
-xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{KNa} in \muA','FontSize',ImageFontSize), axis tight
 
 %exportfig(gcf, 'C_KNa_short.png', 'Format', 'png', 'width', 12.8, 'Color', 'rgb')
  
