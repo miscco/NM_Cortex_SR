@@ -99,21 +99,22 @@ vector<double> rand_inp (MTRand mtrand, int res, int sec, int onset, int f, int 
 /*****************************************************************************************************/
 class Stimulation {
 public:
-	Stimulation(double strength, int delay, int duration, int number, int res, int T, int onset)
-	: stim	(0), 	 	counter	(0),
-	  str	(strength),	del		(delay), dur		(duration), num		(number),
-	  Tsim	(T*res),	Tstart(onset*res)
+	Stimulation(double* var_stim, int res, int T, int onset)
+	: stim	(0), 	 		counter	(0),
+	  str	(var_stim[0]),		del	((int)var_stim[1]), dur	((int)var_stim[2]), num	((int)var_stim[3]),
+	  ref	((int)var_stim[4]), Tsim(T*res),			Tstart(onset*res)
 	{}
 
-	void Start	(vector<double>& Ve, vector<double>& noise1, vector<double>& noise2, int t) {
-		if(stim == 0 && Ve[t]<=-70 && (t+ 2 * num *del)<Tsim) {
-			std::cout << t << "\n";
+	void Start	(vector<double>& Ve, vector<double>& noise1, vector<double>& noise2, vector<double>& noise3, vector<double>& noise4, int t) {
+		if(stim == 0 && Ve[t]<=-65 && (t+ 2 * num *del)<Tsim) {
 			stim 		= 1;
-			counter 	= t + 6 * del;
+			counter 	= t + ref*1E4;
 			for (int i=0; i<num; ++i){
 				for (int j=0; j<dur; ++j){
 					noise1[t + Tstart + (2*i+1)*del + j]	= noise1[t + Tstart + (2*i+1)*del + j] + str;
 					noise2[t + Tstart + (2*i+1)*del + j]	= noise2[t + Tstart + (2*i+1)*del + j] + str;
+					noise3[t + Tstart + (2*i+1)*del + j]	= noise3[t + Tstart + (2*i+1)*del + j] + str;
+					noise4[t + Tstart + (2*i+1)*del + j]	= noise4[t + Tstart + (2*i+1)*del + j] + str;
 				}
 			}
 		}
@@ -134,6 +135,7 @@ private:
 	int 	del,
 			dur,
 			num,
+			ref,
 			Tsim,
 			Tstart;
 };

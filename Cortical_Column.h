@@ -26,7 +26,7 @@ public:
 	{}
 
 	Cortical_Column(double* Con)
-	: Ve	(_INIT(-30)),	Vi 	   	(_INIT(-30)),	Na	 	(_INIT(Na_eq)),	h_A		(_INIT(0.0)),
+	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),	h_A		(_INIT(0.0)),
 	  m_KS	(_INIT(0.0)),
 	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
 	  phi_e	(_INIT(0.0)),
@@ -70,7 +70,7 @@ public:
 	void 	set_RK		(int, _REPEAT(double, 4));
 	void 	add_RK	 	(_REPEAT(double, 2));
 
-	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 6));
+	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 8));
 
 private:
 	// population variables
