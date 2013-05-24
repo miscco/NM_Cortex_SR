@@ -12,11 +12,11 @@ if nargin == 0
 
     T              = 100;               % duration of the simulation
     onset       = 20;                 % time until data is saved
-    var_stim   = [2;                 % strength of the stimulus
+    var_stim   = [1;                 % strength of the stimulus
                          1050E1;       % time until stimulus         in 0.1 ms
                           50E1;          % duration of the stimulus in 0.1 ms
                           1;                % number of stimuli
-                          7];               % minimal time between stimulations
+                          10];               % minimal time between stimulations
 end
 
 [Ve, Vi, phi_e, I_NaP, I_A, I_AR,  I_KS, I_KNa, noise]    = Cortex(Con, T, onset, var_stim);
@@ -61,7 +61,7 @@ title('noise','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFont
 % subplot(511), plot(timeaxis, I_KS + I_KNa)
 % title('I_{KS} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
 % 
-% subplot(512), plot(timeaxis, I_A + I_KNa)
+% subplot(512), plot(timeaxis, I_KNa)
 % title('I_{A} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
 % 
 % subplot(513), plot(timeaxis, I_AR + I_KNa)

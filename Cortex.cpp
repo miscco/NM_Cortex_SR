@@ -33,13 +33,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	const int Time 			= (T+onset)*res;
 
 	// creating the random input
+	//*
 	vector<double> u_e1 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_e2 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i1 = rand_var(mtrand, Time, phi_sc, phi_sc);
 	vector<double> u_i2 = rand_var(mtrand, Time, phi_sc, phi_sc);
+	//*/
 
-	//vector<double> u_e1 = rand_inp(mtrand, res, T, onset, 10, 50E1, phi_sc, phi_sc, phi_inp);
-	//vector<double> u_e2 = rand_inp(mtrand, res, T, onset, 10, 50E1, phi_sc, phi_sc, phi_inp);
+	/*
+	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
+	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
+	vector<double> u_i1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
+	vector<double> u_i2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
+	*/
 
 	// Initializing the populations;
 	Cortical_Column Col(Connectivity);
