@@ -200,7 +200,7 @@ void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, dou
 	Phi_ii	[N] = dt*(var_x_ii);
 	phi_e 	[N] = dt*(var_y_e);
 	x_ee  	[N] = dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) + N_ep * var_phi_e + noise_xRK(N, u_e1, u_e2)	- var_Phi_ee) - 2 * gamma_e * var_x_ee);
-	x_ei  	[N] = dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) 					 + noise_xRK(N, u_i1, u_i2)	- var_Phi_ei) - 2 * gamma_e * var_x_ei);
+	x_ei  	[N] = dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) + N_ep * var_phi_e + noise_xRK(N, u_i1, u_i2)	- var_Phi_ei) - 2 * gamma_e * var_x_ei);
 	x_ie  	[N] = dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) 			  			    					- var_Phi_ie) - 2 * gamma_i * var_x_ie);
 	x_ii  	[N] = dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N)		 	  			 	  					- var_Phi_ii) - 2 * gamma_i * var_x_ii);
 	y_e	 	[N] = dt*(pow(nu, 2) 	  * (	    get_Qe(N)							  					- var_phi_e)  - 2 * nu 	  	* var_y_e);

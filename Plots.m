@@ -6,13 +6,13 @@ function Plots(T, onset, Con)
 if nargin == 0
     Con         = [60;                % N_ee
                         60;                % N_ei
-                        80;                % N_ie
-                        80;                % N_ii
-                        20.5];            % N_ep (long range)
+                        90;                % N_ie
+                        90;                % N_ii
+                        40];            % N_ep (long range)
 
-    T              = 100;               % duration of the simulation
+    T              = 30;               % duration of the simulation
     onset       = 20;                 % time until data is saved
-    var_stim   = [1;                 % strength of the stimulus
+    var_stim   = [0;                 % strength of the stimulus
                          1050E1;       % time until stimulus         in 0.1 ms
                           50E1;          % duration of the stimulus in 0.1 ms
                           1;                % number of stimuli
@@ -32,12 +32,13 @@ TitleFontSize=20;
 AxisFontName='CMU Serif';
 
 figure(1)
-set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize,'XTick',[0:0.5:4])
-subplot(211), plot(timeaxis, phi_e*1E3)
-title('axonal flux from pyramidal population','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('\phi_{e} in \muV','FontSize',ImageFontSize), axis tight
-
-subplot(212), plot(timeaxis, noise)
-title('noise','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('Noise input in ms^{-1}','FontSize',ImageFontSize), axis tight
+set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize)
+subplot(111), plot(timeaxis, Ve)
+title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('Vi_{e} in \muV','FontSize',ImageFontSize)
+% 
+% subplot(212), plot(timeaxis, noise)
+% title('noise','FontSize',TitleFontSize), xlabel('time in
+% s','FontSize',ImageFontSize), ylabel('Noise input in ms^{-1}','FontSize',ImageFontSize), xlim =([0,T]);
 % 
 % figure(2)
 % set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize,'XTick',[0:0.5:4])
