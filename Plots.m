@@ -4,34 +4,32 @@
 function Plots(T, onset, Con)
 
 if nargin == 0
-    Con         = [60;                % N_ee
-                        60;                % N_ei
-                        90;                % N_ie
-                        90;                % N_ii
-                        40];            % N_ep (long range)
+    Con        = [80;			% N_ee
+                  60;			% N_ei
+                  90;			% N_ie
+                  90]; 			% N_ii
 
-    T              = 30;               % duration of the simulation
-    onset       = 20;                 % time until data is saved
-    var_stim   = [0;                 % strength of the stimulus
-                         1050E1;       % time until stimulus         in 0.1 ms
-                          50E1;          % duration of the stimulus in 0.1 ms
-                          1;                % number of stimuli
-                          10];               % minimal time between stimulations
+    T          = 60;			% duration of the simulation
+    onset      = 20;			% time until data is saved
+    
+    var_stim   = [0;			% strength of the stimulus
+                  1050E1;		% time until stimulus         in 0.1 ms
+                  50E1;			% duration of the stimulus in 0.1 ms
+                  1;			% number of stimuli
+                  10];			% minimal time between stimulations
 end
 
-[Ve, Vi, phi_e, I_NaP, I_A, I_AR,  I_KS, I_KNa, noise]    = Cortex(Con, T, onset, var_stim);
+[Ve]    = Cortex(Con, T, onset, var_stim);
 
 L           = max(size(Ve));
 fs          = L/T;
 timeaxis    = linspace(0,T,L);
 
-noise = noise(onset*fs+1:end);
-
 ImageFontSize=16;
 TitleFontSize=20;
 AxisFontName='CMU Serif';
 
-figure(1)
+figure(2)
 set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize)
 subplot(111), plot(timeaxis, Ve)
 title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('Vi_{e} in \muV','FontSize',ImageFontSize)
@@ -75,13 +73,12 @@ title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s
 % title('I_{AR} + I_{KS} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
 
 %exportfig(gcf, 'C_KNa_short.png', 'Format', 'png', 'width', 12.8, 'Color', 'rgb')
- 
-% fs      = L/T;
-% [Pxx,f] = pwelch(Ve-mean(Ve),[], [], [], fs);
+%  
+% [Pxx,f] = pwelch(Ve-mean(Ve),[], [],[], fs);
 % n       = find(f<=60, 1, 'last' );
 %  
 % figure(7)
-% plot(f(1:n),log(Pxx(1:n)))
+% plot(log(f(1:n)),log(Pxx(1:n)))
 % title('Powerspectrum with pwelch'), xlabel('frequency in Hz'), ylabel('Power (log)')
 
 %save('Ve.mat', 'Ve')
