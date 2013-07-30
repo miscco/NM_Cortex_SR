@@ -32,12 +32,6 @@ public:
 	double 	get_Qe		(int) const;
 	double 	get_Qi		(int) const;
 
-	// membrane respone functions
-	double 	psi_ee		(int) const;
-	double 	psi_ei		(int) const;
-	double 	psi_ie		(int) const;
-	double 	psi_ii		(int) const;
-
 	// current functions
 	double 	I_L_e		(int) const;
 	double 	I_L_i		(int) const;

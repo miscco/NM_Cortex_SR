@@ -4,7 +4,6 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-#include "matio.h"
 
 #include "randoms.h"
 #include "Cortical_Column.h"
@@ -24,10 +23,10 @@ int main(void) {
 	MTRand mtrand;
 
 	// creating the random input
-	vector<double> u_e1 = rand_var(mtrand, T*res, phi_sc, phi_sc);
-	vector<double> u_e2 = rand_var(mtrand, T*res, phi_sc, phi_sc);
-	vector<double> u_i1 = rand_var(mtrand, T*res, phi_sc, phi_sc);
-	vector<double> u_i2 = rand_var(mtrand, T*res, phi_sc, phi_sc);
+	vector<double> u_e1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
+	vector<double> u_e2 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
+	vector<double> u_i1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
+	vector<double> u_i2 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
 
 	// Initializing the populations;
 	Cortical_Column Col;

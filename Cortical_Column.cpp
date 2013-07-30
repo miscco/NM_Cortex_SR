@@ -23,41 +23,6 @@ double Cortical_Column::get_Qi	(int N) const{
 
 
 /*****************************************************************************************************/
-/**********************************		 weighting functions 		**********************************/
-/*****************************************************************************************************/
-// exitatory input to pyramidal population
-double Cortical_Column::psi_ee	(int N) const{
-	_SWITCH((Ve))
-	double psi = (V_rev_e-var_Ve);
-	return psi;
-}
-
-// exitatory input to inhibitory population
-double Cortical_Column::psi_ei	(int N) const{
-	_SWITCH((Vi))
-	double psi = (V_rev_e-var_Vi);
-	return psi;
-}
-
-// inhibitory input to pyramidal population
-double Cortical_Column::psi_ie	(int N) const{
-	_SWITCH((Ve))
-	double psi = (V_rev_i-var_Ve);
-	return psi;
-}
-
-// inhibitory input to inhibitory population
-double Cortical_Column::psi_ii	(int N) const{
-	_SWITCH((Vi))
-	double psi = (V_rev_i-var_Vi);
-	return psi;
-}
-/*****************************************************************************************************/
-/**********************************		 		end			 		**********************************/
-/*****************************************************************************************************/
-
-
-/*****************************************************************************************************/
 /**********************************		 Current functions 			**********************************/
 /*****************************************************************************************************/
 // Leak current of pyramidal population
@@ -120,10 +85,11 @@ double Cortical_Column::noise_xRK(int N, double u_1, double u_2) const{
 // function that calculates the Nth RK term
 void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, double u_i2) {
 	extern const double dt;
-	_SWITCH((Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)
+	_SWITCH((Ve)	(Vi)
+			(Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii))
-	Ve	  	[N] = dt/tau_e * ( psi_ee(N) * var_Phi_ee + psi_ie(N) * var_Phi_ie	- c * (I_L_e(N) + I_KNa(N)));
-	Vi	  	[N] = dt/tau_i * ( psi_ei(N) * var_Phi_ei + psi_ii(N) * var_Phi_ii	- c * (I_L_i(N)));
+	Ve	  	[N] = dt/tau_e * ( - var_Phi_ee * (var_Ve - V_rev_e) - var_Phi_ie * (var_Ve - V_rev_i) - c * (I_L_e(N) + I_KNa(N)));
+	Vi	  	[N] = dt/tau_i * ( - var_Phi_ei * (var_Vi - V_rev_e) - var_Phi_ii * (var_Vi - V_rev_i) - c * (I_L_i(N)));
 	Na		[N] = dt*(alpha_Na*get_Qe(N) - Na_pump(N))/tau_Na;
 	Phi_ee	[N] = dt*(var_x_ee);
 	Phi_ei	[N] = dt*(var_x_ei);
