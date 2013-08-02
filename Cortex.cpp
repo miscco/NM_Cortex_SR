@@ -12,7 +12,7 @@ using std::vector;
 // mex command is given by:
 // mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" SteynRoss.cpp Cortical_Colun.cpp
 
-extern const int res 	= 1E5;
+extern const int res 	= 1E4;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
 extern const int red 	= 1E3;

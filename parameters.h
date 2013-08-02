@@ -6,11 +6,11 @@
 /**********************************		 physical properties 		**********************************/
 /*****************************************************************************************************/
 // Time constants for exhibitory and inhibitory neurons in ms
-#define tau_e 		1
-#define tau_i 		1
+#define tau_e 		30
+#define tau_i 		30
 
-// current scaling in cm^2
-#define c			10.
+// mean neuronal surface in 1E-3 cm^2
+#define A_p			0.29
 
 // Maximum firing rate in ms^-1
 #define Qe_max		30.E-3
@@ -35,7 +35,7 @@
 /*****************************************************************************************************/
 // parameters of the firing adaption
 #define alpha_Na	0.5
-#define tau_Na		0.3
+#define tau_Na		0.2
 
 #define R_pump   	0.018        	// Na-K pump  constant                          in mM/ms
 #define Na_eq    	9.5          	// Na-eq concentration                          in mM
@@ -62,8 +62,8 @@
 /**********************************		 	conductivities 			**********************************/
 /*****************************************************************************************************/
 // Leak current
-#define gL_e		0.1
-#define gL_i		0.1
+#define gL_e		1
+#define gL_i		1
 #define gLK_e		0.0
 #define gLK_i		0.0
 
@@ -98,8 +98,8 @@
 /**********************************			noise parameters		**********************************/
 /*****************************************************************************************************/
 // synaptic scaling
-#define mphi_sc		10E-3
-#define dphi_sc		5E-3
+#define mphi_sc		0E-3
+#define dphi_sc		20E-3
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
 /*****************************************************************************************************/

@@ -33,6 +33,10 @@ public:
 	double 	get_Qi		(int) const;
 
 	// current functions
+	double 	I_ee		(int) const;
+	double 	I_ei		(int) const;
+	double 	I_ie		(int) const;
+	double 	I_ii		(int) const;
 	double 	I_L_e		(int) const;
 	double 	I_L_i		(int) const;
 	double 	I_KNa		(int) const;

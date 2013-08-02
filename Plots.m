@@ -4,13 +4,13 @@
 function Plots(T, onset, Con)
 
 if nargin == 0
-    Con        = [80;			% N_ee
+    Con        = [90;			% N_ee
                   60;			% N_ei
                   90;			% N_ie
                   90]; 			% N_ii
 
-    T          = 60;			% duration of the simulation
-    onset      = 20;			% time until data is saved
+    T          = 30;			% duration of the simulation
+    onset      = 60;			% time until data is saved
     
     var_stim   = [0;			% strength of the stimulus
                   1050E1;		% time until stimulus         in 0.1 ms

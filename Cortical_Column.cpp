@@ -23,6 +23,41 @@ double Cortical_Column::get_Qi	(int N) const{
 
 
 /*****************************************************************************************************/
+/**********************************		 synaptic currents			**********************************/
+/*****************************************************************************************************/
+// excitatory input to pyramidal population
+double Cortical_Column::I_ee	(int N) const{
+	_SWITCH((Ve)(Phi_ee))
+	double psi = var_Phi_ee * (var_Ve - V_rev_e);
+	return psi;
+}
+
+// inhibitory input to pyramidal population
+double Cortical_Column::I_ie	(int N) const{
+	_SWITCH((Ve)(Phi_ie))
+	double psi = var_Phi_ie * (var_Ve - V_rev_i);
+	return psi;
+}
+// excitatory input to inhibitory population
+double Cortical_Column::I_ei	(int N) const{
+	_SWITCH((Vi)(Phi_ei))
+	double psi = var_Phi_ei * (var_Vi - V_rev_e);
+	return psi;
+}
+
+// inhibitory input to inhibitory population
+double Cortical_Column::I_ii	(int N) const{
+	_SWITCH((Vi)(Phi_ii))
+	double psi = var_Phi_ii * (var_Vi - V_rev_i);
+	return psi;
+}
+/*****************************************************************************************************/
+/**********************************		 		end			 		**********************************/
+/*****************************************************************************************************/
+
+
+
+/*****************************************************************************************************/
 /**********************************		 Current functions 			**********************************/
 /*****************************************************************************************************/
 // Leak current of pyramidal population
@@ -43,7 +78,7 @@ double Cortical_Column::I_L_i	(int N) const{
 double Cortical_Column::I_KNa		(int N)  const{
 	_SWITCH((Ve)(Na))
 	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
-	double I_KNa  = g_KNa * w_KNa * (var_Ve - E_K);
+	double I_KNa  = A_p * g_KNa * w_KNa * (var_Ve - E_K);
 	return I_KNa;
 }
 /*****************************************************************************************************/
@@ -88,8 +123,8 @@ void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, dou
 	_SWITCH((Ve)	(Vi)
 			(Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii))
-	Ve	  	[N] = dt/tau_e * ( - var_Phi_ee * (var_Ve - V_rev_e) - var_Phi_ie * (var_Ve - V_rev_i) - c * (I_L_e(N) + I_KNa(N)));
-	Vi	  	[N] = dt/tau_i * ( - var_Phi_ei * (var_Vi - V_rev_e) - var_Phi_ii * (var_Vi - V_rev_i) - c * (I_L_i(N)));
+	Ve	  	[N] = dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
+	Vi	  	[N] = dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
 	Na		[N] = dt*(alpha_Na*get_Qe(N) - Na_pump(N))/tau_Na;
 	Phi_ee	[N] = dt*(var_x_ee);
 	Phi_ei	[N] = dt*(var_x_ei);
