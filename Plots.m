@@ -4,7 +4,7 @@
 function Plots(T, onset, Con)
 
 if nargin == 0
-    Con        = [90;			% N_ee
+    Con        = [100;			% N_ee
                   60;			% N_ei
                   90;			% N_ie
                   90]; 			% N_ii

@@ -78,7 +78,7 @@ double Cortical_Column::I_L_i	(int N) const{
 double Cortical_Column::I_KNa		(int N)  const{
 	_SWITCH((Ve)(Na))
 	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
-	double I_KNa  = A_p * g_KNa * w_KNa * (var_Ve - E_K);
+	double I_KNa  = g_KNa * w_KNa * (var_Ve - E_K);
 	return I_KNa;
 }
 /*****************************************************************************************************/
