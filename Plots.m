@@ -1,25 +1,31 @@
 % mex command is given by: 
 % mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" SteynRoss.cpp Cortical_Colum.cpp
 
-function Plots(T, onset, Con)
+function Plots(T, onset, Input)
 
 if nargin == 0
-    Con        = [100;			% N_ee
-                  60;			% N_ei
-                  90;			% N_ie
-                  90]; 			% N_ii
+    Con                     = [  100;		% N_ee
+                                      60;			% N_ei
+                                      90;			% N_ie
+                                      90]; 			% N_ii
+    Adaption             = [ 2;              % alpha_Na
+                                     0.09];        % R_pump
+                                 
+   Noise_inp             = [ 20E-3;     % mean
+                                      20E-3];   % sd
+                                  
+    % Full input vector                              
+	Input                   = [ Con;
+                                     Adaption;
+                                     Noise_inp];
 
-    T          = 30;			% duration of the simulation
-    onset      = 60;			% time until data is saved
-    
-    var_stim   = [0;			% strength of the stimulus
-                  1050E1;		% time until stimulus         in 0.1 ms
-                  50E1;			% duration of the stimulus in 0.1 ms
-                  1;			% number of stimuli
-                  10];			% minimal time between stimulations
+    T          = 60;			% duration of the simulation
+    onset    = 5;			% time until data is saved
 end
 
-[Ve]    = Cortex(Con, T, onset, var_stim);
+
+
+[Ve]    = Cortex(Input);
 
 L           = max(size(Ve));
 fs          = L/T;

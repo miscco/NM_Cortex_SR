@@ -25,7 +25,8 @@ public:
 	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
 	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
 	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  N_ee  (Con[0]), 	 	N_ei	(Con[1]), 	  	N_ie	(Con[2]),	   	N_ii 	(Con[3])
+	  N_ee  (Con[0]), 	 	N_ei	(Con[1]), 	  	N_ie	(Con[2]),	   	N_ii 	(Con[3]),
+	  alpha_Na (Con[4]), 	R_pump	(Con[5])
 	{}
 
 	// firing rate functions
@@ -72,5 +73,8 @@ private:
 					N_ei,		// exitatory  		  to inhibitory
 					N_ie,		// inhibitory 		  to exitatory
 					N_ii;		// inhibitory 		  to inhibitory
+	// connectivities
+	double			alpha_Na,	// Sodium influx per spike
+					R_pump;		// Sodium pump capacity
 };
 

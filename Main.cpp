@@ -11,7 +11,7 @@
 
 using std::vector;
 
-extern const int T 		= 50;
+extern const int T 		= 60;
 extern const int res 	= 1E4;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
@@ -21,6 +21,9 @@ extern const double h	= sqrt(dt);
 int main(void) {
 	// Initializing the mersenne twister.
 	MTRand mtrand;
+
+	const double	mphi_sc	= 20E-3;
+	const double	dphi_sc	= 20E-3;
 
 	// creating the random input
 	vector<double> u_e1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
