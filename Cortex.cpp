@@ -13,7 +13,7 @@ using std::vector;
 // mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp
 
 extern const int res 	= 1E4;
-extern const int red 	= 1E2;
+extern const int red 	= res/100;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
 
@@ -26,16 +26,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	MTRand mtrand;
 
 	// inputs
-	double* Input		 	= mxGetPr (prhs[0]);/*
+	double* Input		 	= mxGetPr (prhs[0]);
 	const int T				= (int) (mxGetScalar(prhs[1]));
-	const int onset			= (int) (mxGetScalar(prhs[2]));*/
+	const int onset			= (int) (mxGetScalar(prhs[2]));
 
-	const int T		= 60;
-	const int onset = 5;
-	const int Time 			= (T+onset)*res;
+	/*
+	const int 		T		= 30;
+	const int 		onset	= 10;
+	*/
+	const int 		Time 	= (T+onset)*res;
 
-	const double	mphi_sc	= Input[6];
-	const double	dphi_sc	= Input[7];
+	//const double	mphi_sc	= Input[6];
+	//const double	dphi_sc	= Input[7];
 
 	// creating the random input
 	//*
@@ -59,7 +61,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	//Stimulation Stim(var_stim, res, T, onset);
 
 	// setting up the data containers
-	vector<double> Ve 	 	(T*res/red);
+	vector<double> Ve (T*res/red);
 
 	// simulation
 	int count = 0;

@@ -21,12 +21,13 @@ public:
 	  N_ee  (40), 			N_ei   	(40), 		  	N_ie	(80),		   	N_ii 	(80)
 	{}
 
-	Cortical_Column(double* Con)
+	Cortical_Column(double* Par)
 	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
 	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
 	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  N_ee  (Con[0]), 	 	N_ei	(Con[1]), 	  	N_ie	(Con[2]),	   	N_ii 	(Con[3]),
-	  alpha_Na (Con[4]), 	R_pump	(Con[5])
+	  N_ee  (Par[0]), 	 	N_ei	(Par[1]), 	  	N_ie	(Par[2]),	   	N_ii 	(Par[3]),
+	  alpha_Na (Par[4]), 	tau_Na	(Par[5]),		g_KNa	(Par[6]),
+	  tau_e (Par[7]), 	 	tau_i	(Par[8]), 	  	theta_e	(Par[9]),	   	sigma_e 	(Par[10])
 	{}
 
 	// firing rate functions
@@ -73,8 +74,18 @@ private:
 					N_ei,		// exitatory  		  to inhibitory
 					N_ie,		// inhibitory 		  to exitatory
 					N_ii;		// inhibitory 		  to inhibitory
-	// connectivities
+
+	// adaption parameters
 	double			alpha_Na,	// Sodium influx per spike
-					R_pump;		// Sodium pump capacity
+					tau_Na,		// Sodium time constant
+					g_KNa;		// KNa conductance
+
+	// time constants
+	double			tau_e,		// pyramidal  time constant
+					tau_i;		// inhibitory time constant
+
+	// resting potentials
+	double			theta_e,		// pyramidal  leak
+					sigma_e;		// inhibitory leak
 };
 

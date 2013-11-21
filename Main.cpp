@@ -22,8 +22,8 @@ int main(void) {
 	// Initializing the mersenne twister.
 	MTRand mtrand;
 
-	const double	mphi_sc	= 20E-3;
-	const double	dphi_sc	= 20E-3;
+	//const double	mphi_sc	= 20E-3;
+	//const double	dphi_sc	= 20E-3;
 
 	// creating the random input
 	vector<double> u_e1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);

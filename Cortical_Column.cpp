@@ -124,7 +124,7 @@ void Cortical_Column::set_RK		(int N, double u_e1, double u_e2, double u_i1, dou
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii))
 	Ve	  	[N] = dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
 	Vi	  	[N] = dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
-	Na		[N] = dt*(alpha_Na * get_Qe(N) - Na_pump(N));
+	Na		[N] = dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
 	Phi_ee	[N] = dt*(var_x_ee);
 	Phi_ei	[N] = dt*(var_x_ei);
 	Phi_ie	[N] = dt*(var_x_ie);

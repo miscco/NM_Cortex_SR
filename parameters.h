@@ -6,20 +6,29 @@
 /**********************************		 physical properties 		**********************************/
 /*****************************************************************************************************/
 // Time constants for exhibitory and inhibitory neurons in ms
-#define tau_e 		30
+
+/* fitting variables
+#define tau_e 		25
 #define tau_i 		30
+*/
 
 // Maximum firing rate in ms^-1
 #define Qe_max		30.E-3
 #define Qi_max		60.E-3
 
 // Sigmoid threshold values in mV
+/* fitting variables
 #define theta_e		-58.5
+*/
 #define theta_i		-58.5
 
+
 // Standard deviation for threshold in mV
+/* fitting variables
 #define sigma_e		4
+*/
 #define sigma_i		6
+
 // Parameter for sigmoidal mapping (dimensionless)
 #define C           (3.14159265/sqrt(3))
 /*****************************************************************************************************/
@@ -33,8 +42,8 @@
 // parameters of the firing adaption
 /* fitting variables
 #define alpha_Na	2				// Sodium influx per spike						in mM ms
-#define R_pump   	0.09        	// Na pump  capacity                          	in mM/ms
 */
+#define R_pump   	0.09        	// Na pump  capacity                          	in mM/ms
 #define Na_eq    	9.5          	// Na-eq concentration                          in mM
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
@@ -63,7 +72,9 @@
 #define gL_i		1
 
 // KNa current
+/* fitting variables
 #define g_KNa    	1.33
+*/
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
 /*****************************************************************************************************/
@@ -77,7 +88,7 @@
 #define V_rev_i  	-70
 
 // Leak reversal
-#define E_L_e 		-64
+#define E_L_e 		-66.2
 #define E_L_i 		-64
 
 // K reversal
@@ -91,10 +102,8 @@
 /**********************************			noise parameters		**********************************/
 /*****************************************************************************************************/
 // synaptic scaling
-/* fitting variables
-#define mphi_sc		20E-3
-#define dphi_sc		20E-3
-*/
+#define mphi_sc		0E-3
+#define dphi_sc		2E-3
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
 /*****************************************************************************************************/
