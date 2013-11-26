@@ -45,49 +45,11 @@ time = linspace(0,T,T*100);
 i    = randi([0,239-T],1);
 figure(1)
 subplot(211)
-plot(time,zscore(Ve'))
+plot(time,Ve')
 title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
 subplot(212)
 plot(time,Data(i*100+1:(i+T)*100))
 title('EEG trace','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-% 
-% subplot(212), plot(timeaxis, noise)
-% title('noise','FontSize',TitleFontSize), xlabel('time in
-% s','FontSize',ImageFontSize), ylabel('Noise input in ms^{-1}','FontSize',ImageFontSize), xlim =([0,T]);
-% 
-% figure(2)
-% set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize,'XTick',[0:0.5:4])
-% subplot(511), plot(timeaxis, I_KNa)
-% title('I_{NaP} current','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{NaP} in \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(512), plot(timeaxis, I_A)
-% title('I_{A} current','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{A} in \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(513), plot(timeaxis, I_AR)
-% title('I_{AR} current','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{AR} in \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(514), plot(timeaxis, I_KS)
-% title('I_{KS} current','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{KS} in \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(515), plot(timeaxis, I_KNa)
-% title('I_{KNa} current','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('I_{KNa} in \muA','FontSize',ImageFontSize), axis tight
-% 
-% figure(3)
-% set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize,'XTick',[0:0.5:4])
-% subplot(511), plot(timeaxis, I_KS + I_KNa)
-% title('I_{KS} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(512), plot(timeaxis, I_KNa)
-% title('I_{A} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(513), plot(timeaxis, I_AR + I_KNa)
-% title('I_{AR} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(514), plot(timeaxis, I_A + I_KS + I_KNa)
-% title('I_{A} + I_{KS} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
-% 
-% subplot(515), plot(timeaxis, I_AR + I_KS + I_KNa)
-% title('I_{AR} + I_{KS} + I_{KNa}','FontSize',TitleFontSize), xlabel('time in s','FontSize',ImageFontSize), ylabel('In \muA','FontSize',ImageFontSize), axis tight
 
 %exportfig(gcf, 'C_K_complex.png', 'Format', 'png', 'width', 12.8, 'Color', 'rgb')
 %  
