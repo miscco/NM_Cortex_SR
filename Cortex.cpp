@@ -15,7 +15,7 @@ using std::vector;
 extern const int res 	= 1E4;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
-extern const int red 	= 1E3;
+extern const int red 	= 1E2;
 
 
 // simulation of the model proposed in Steyn-Ross2004
@@ -34,19 +34,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	const int Time 			= (T+onset)*res;
 
 	// creating the random input
-	//*
+	/*
 	vector<double> u_e1 = rand_var(mtrand, Time, mphi_sc, dphi_sc);
 	vector<double> u_e2 = rand_var(mtrand, Time, mphi_sc, dphi_sc);
 	vector<double> u_i1 = rand_var(mtrand, Time, mphi_sc, dphi_sc);
 	vector<double> u_i2 = rand_var(mtrand, Time, mphi_sc, dphi_sc);
-	//*/
+	/*/
 
-	/*
-	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_i1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_i2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	*/
+	//*
+	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_i1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_i2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	//*/
 
 	// Initializing the populations;
 	Cortical_Column Col(Connectivity);

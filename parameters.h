@@ -9,9 +9,6 @@
 #define tau_e 		30
 #define tau_i 		30
 
-// mean neuronal surface in 1E-3 cm^2
-#define A_p			0.29
-
 // Maximum firing rate in ms^-1
 #define Qe_max		30.E-3
 #define Qi_max		60.E-3
@@ -34,10 +31,10 @@
 /**********************************		 firing rate parameter		**********************************/
 /*****************************************************************************************************/
 // parameters of the firing adaption
-#define alpha_Na	0.4
-#define tau_Na		0.2
+#define alpha_Na	2
+#define tau_Na		1
 
-#define R_pump   	0.018        	// Na-K pump  constant                          in mM/ms
+#define R_pump   	0.09        	// Na-K pump  constant                          in mM/ms
 #define Na_eq    	9.5          	// Na-eq concentration                          in mM
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
@@ -64,8 +61,6 @@
 // Leak current
 #define gL_e		1
 #define gL_i		1
-#define gLK_e		0.0
-#define gLK_i		0.0
 
 // KNa current
 #define g_KNa    	1.33
@@ -78,16 +73,14 @@
 /**********************************		 reversal potentials 		**********************************/
 /*****************************************************************************************************/
 // synaptic inputs in mV
-#define V_rev_e  	0
-#define V_rev_i  	-70
+#define E_AMPA  	0
+#define E_GABA  	-70
 
 // Leak reversal
 #define E_L_e 		-64
 #define E_L_i 		-64
-#define E_LK_e		-95
-#define E_LK_i		-95
 
-// K reversal
+// Potassium reversal
 #define E_K    		-100
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
@@ -99,7 +92,7 @@
 /*****************************************************************************************************/
 // synaptic scaling
 #define mphi_sc		20E-3
-#define dphi_sc		20E-3
+#define dphi_sc		0E-3
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
 /*****************************************************************************************************/

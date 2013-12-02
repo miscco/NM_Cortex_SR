@@ -28,27 +28,27 @@ double Cortical_Column::get_Qi	(int N) const{
 // excitatory input to pyramidal population
 double Cortical_Column::I_ee	(int N) const{
 	_SWITCH((Ve)(Phi_ee))
-	double psi = var_Phi_ee * (var_Ve - V_rev_e);
+	double psi = var_Phi_ee * (var_Ve - E_AMPA);
 	return psi;
 }
 
 // inhibitory input to pyramidal population
 double Cortical_Column::I_ie	(int N) const{
 	_SWITCH((Ve)(Phi_ie))
-	double psi = var_Phi_ie * (var_Ve - V_rev_i);
+	double psi = var_Phi_ie * (var_Ve - E_GABA);
 	return psi;
 }
 // excitatory input to inhibitory population
 double Cortical_Column::I_ei	(int N) const{
 	_SWITCH((Vi)(Phi_ei))
-	double psi = var_Phi_ei * (var_Vi - V_rev_e);
+	double psi = var_Phi_ei * (var_Vi - E_AMPA);
 	return psi;
 }
 
 // inhibitory input to inhibitory population
 double Cortical_Column::I_ii	(int N) const{
 	_SWITCH((Vi)(Phi_ii))
-	double psi = var_Phi_ii * (var_Vi - V_rev_i);
+	double psi = var_Phi_ii * (var_Vi - E_GABA);
 	return psi;
 }
 /*****************************************************************************************************/
@@ -63,14 +63,14 @@ double Cortical_Column::I_ii	(int N) const{
 // Leak current of pyramidal population
 double Cortical_Column::I_L_e	(int N) const{
 	_SWITCH((Ve))
-	double I = gL_e * (var_Ve - E_L_e) + gLK_e * (var_Ve - E_LK_e);
+	double I = gL_e * (var_Ve - E_L_e);
 	return I;
 }
 
 // Leak current of inhibitory population
 double Cortical_Column::I_L_i	(int N) const{
 	_SWITCH((Vi))
-	double I = gL_i * (var_Vi - E_L_i) + gLK_i * (var_Vi - E_LK_i);
+	double I = gL_i * (var_Vi - E_L_i);
 	return I;
 }
 

@@ -12,7 +12,7 @@ if nargin == 0
     T          = 30;			% duration of the simulation
     onset      = 60;			% time until data is saved
     
-    var_stim   = [0;			% strength of the stimulus
+    var_stim   = [1E-3;			% strength of the stimulus
                   1050E1;		% time until stimulus         in 0.1 ms
                   50E1;			% duration of the stimulus in 0.1 ms
                   1;			% number of stimuli
@@ -29,7 +29,7 @@ ImageFontSize=16;
 TitleFontSize=20;
 AxisFontName='CMU Serif';
 
-figure(2)
+%figure(2)
 set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize)
 subplot(111), plot(timeaxis, Ve)
 title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('Vi_{e} in \muV','FontSize',ImageFontSize)
