@@ -51,7 +51,7 @@ public:
 	void 	set_RK		(int, _REPEAT(double, 4));
 	void 	add_RK	 	(_REPEAT(double, 2));
 
-	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 1));
+	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 2));
 
 private:
 	// population variables
