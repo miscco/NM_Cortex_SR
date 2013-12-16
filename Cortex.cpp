@@ -57,9 +57,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	// Initializing the populations;
 	Cortical_Column Col(Input);
 
-	// Initializing the stimulation object
-	//Stimulation Stim(var_stim, res, T, onset);
-
 	// setting up the data containers
 	vector<double> Ve (T*res/red);
 
@@ -69,7 +66,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		ODE (Col, u_e1[t], u_e2[t], u_i1[t], u_i2[t]);
 		if(t>=onset*res && t%red==0){
 		get_data(count, Col, Ve);
-		//Stim.Start(Ve, u_e1, u_e2, u_i1, u_i2, count);
 		++count;
 		}
 	}
