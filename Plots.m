@@ -11,7 +11,8 @@ Data=zscore(double(data30(6,(391*100):(630*100))))';
 
 
 if nargin == 0
-    Input                = [102.8;		% N_ee
+    % fittet input
+    Input_fit            = [102.8;		% N_ee
                             72.3;			% N_ei
                             100.5;		% N_ie
                             100.5; 		% N_ii
@@ -22,13 +23,25 @@ if nargin == 0
                             29.75; 		% tau_i
                             -64.5536;        % theta_e
                             8.3553];      % sigma_e
+                        
+    Input_orig            = [120;		% N_ee
+                            70;			% N_ei
+                            90;		% N_ie
+                            90; 		% N_ii
+                            2;        % alpha_Na
+                            1;		% tau_Na
+                            1.33;			% g_KNa
+                            30;		% tau_e
+                            30; 		% tau_i
+                            -58.5;        % theta_e
+                            4];      % sigma_e
     T          = 30;			% duration of the simulation
     onset    = 10;			% time until data is saved
 end
 
 
 
-[Ve]    = Cortex(T, onset, Input);
+[Ve]    = Cortex(T, onset, Input_orig);
 
 L           = max(size(Ve));
 fs          = L/T;
