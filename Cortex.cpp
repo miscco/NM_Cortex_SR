@@ -26,18 +26,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	MTRand mtrand;
 
 	// inputs
-	const int T				= (int) (mxGetScalar(prhs[0]));
+	const int T			= (int) (mxGetScalar(prhs[0]));
 	const int onset			= (int) (mxGetScalar(prhs[1]));
-	double* Input		 	= mxGetPr (prhs[2]);
+	double* Input	 		= mxGetPr (prhs[2]);
+	double* var_stim	 	= mxGetPr (prhs[3]);
 
-	/*
-	const int 		T		= 30;
-	const int 		onset	= 10;
-	*/
-	const int 		Time 	= (T+onset)*res;
-
-	//const double	mphi_sc	= Input[6];
-	//const double	dphi_sc	= Input[7];
+	const int Time 			= (T+onset)*res;
 
 	// creating the random input
 	//*
@@ -48,28 +42,31 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	//*/
 
 	/*
-	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_i1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	vector<double> u_i2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], phi_sc, phi_sc, 1);
-	*/
+	vector<double> u_e1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_e2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_i1 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	vector<double> u_i2 = rand_inp(mtrand, res, T, onset, var_stim[4], var_stim[2], mphi_sc, dphi_sc, var_stim[0]);
+	/*/
 
 	// Initializing the populations;
 	Cortical_Column Col(Input);
 
 	// setting up the data containers
-	vector<double> Ve (T*res/red);
+	vector<double> Ve 	 	(T*res/red);
+	vector<double> Na 	 	(T*res/red);
 
 	// simulation
 	int count = 0;
 	for (int t=0; t<Time; ++t) {
 		ODE (Col, u_e1[t], u_e2[t], u_i1[t], u_i2[t]);
 		if(t>=onset*res && t%red==0){
-		get_data(count, Col, Ve);
+		get_data(count, Col, Ve, Na);
+		//Stim.Start(Ve, u_e1, u_e2, u_i1, u_i2, count);
 		++count;
 		}
 	}
 
 	plhs[0]  = getMexArray(Ve);
+	plhs[1]  = getMexArray(Na);
 	return;
 }

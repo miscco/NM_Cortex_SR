@@ -37,11 +37,15 @@ if nargin == 0
                             4];      % sigma_e
     T          = 30;			% duration of the simulation
     onset    = 10;			% time until data is saved
+    
+    var_stim   = [1E-3;			% strength of the stimulus
+                  1050E1;		% time until stimulus         in 0.1 ms
+                  50E1;			% duration of the stimulus in 0.1 ms
+                  1;			% number of stimuli
+                  10];			% minimal time between stimulations
 end
 
-
-
-[Ve]    = Cortex(T, onset, Input_orig);
+[Ve, ~]    = Cortex(T, onset, Input_orig);
 
 L           = max(size(Ve));
 fs          = L/T;
@@ -51,11 +55,11 @@ ImageFontSize=16;
 TitleFontSize=20;
 AxisFontName='CMU Serif';
 
-figure(1)
 set(gca,'FontName',AxisFontName,'FontSize',ImageFontSize)
 % plottig the result with an random T second snipplet from the Data
 time = linspace(0,T,T*100);
 i    = randi([0,239-T],1);
+
 figure(1)
 subplot(211)
 plot(time,zscore(Ve'))

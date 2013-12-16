@@ -6,7 +6,6 @@
 /**********************************		 physical properties 		**********************************/
 /*****************************************************************************************************/
 // Time constants for exhibitory and inhibitory neurons in ms
-
 /* fitting variables
 #define tau_e 		25
 #define tau_i 		30
@@ -42,8 +41,10 @@
 // parameters of the firing adaption
 /* fitting variables
 #define alpha_Na	2				// Sodium influx per spike						in mM ms
+#define tau_Na		1
 */
-#define R_pump   	0.09        	// Na pump  capacity                          	in mM/ms
+
+#define R_pump   	0.09        	// Na-K pump  constant                          in mM/ms
 #define Na_eq    	9.5          	// Na-eq concentration                          in mM
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
@@ -84,14 +85,14 @@
 /**********************************		 reversal potentials 		**********************************/
 /*****************************************************************************************************/
 // synaptic inputs in mV
-#define V_rev_e  	0
-#define V_rev_i  	-70
+#define E_AMPA  	0
+#define E_GABA  	-70
 
 // Leak reversal
 #define E_L_e 		-64
 #define E_L_i 		-64
 
-// K reversal
+// Potassium reversal
 #define E_K    		-100
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/
