@@ -26,9 +26,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	MTRand mtrand;
 
 	// inputs
-	double* Input		 	= mxGetPr (prhs[0]);
-	const int T				= (int) (mxGetScalar(prhs[1]));
-	const int onset			= (int) (mxGetScalar(prhs[2]));
+	const int T				= (int) (mxGetScalar(prhs[0]));
+	const int onset			= (int) (mxGetScalar(prhs[1]));
+	double* Input		 	= mxGetPr (prhs[2]);
 
 	/*
 	const int 		T		= 30;

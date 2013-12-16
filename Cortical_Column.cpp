@@ -28,28 +28,28 @@ double Cortical_Column::get_Qi	(int N) const{
 // excitatory input to pyramidal population
 double Cortical_Column::I_ee	(int N) const{
 	_SWITCH((Ve)(Phi_ee))
-	double psi = var_Phi_ee * (var_Ve - V_rev_e);
-	return psi;
+	double I = var_Phi_ee * (var_Ve - V_rev_e);
+	return I;
 }
 
 // inhibitory input to pyramidal population
 double Cortical_Column::I_ie	(int N) const{
 	_SWITCH((Ve)(Phi_ie))
-	double psi = var_Phi_ie * (var_Ve - V_rev_i);
-	return psi;
+	double I = var_Phi_ie * (var_Ve - V_rev_i);
+	return I;
 }
 // excitatory input to inhibitory population
 double Cortical_Column::I_ei	(int N) const{
 	_SWITCH((Vi)(Phi_ei))
-	double psi = var_Phi_ei * (var_Vi - V_rev_e);
-	return psi;
+	double I = var_Phi_ei * (var_Vi - V_rev_e);
+	return I;
 }
 
 // inhibitory input to inhibitory population
 double Cortical_Column::I_ii	(int N) const{
 	_SWITCH((Vi)(Phi_ii))
-	double psi = var_Phi_ii * (var_Vi - V_rev_i);
-	return psi;
+	double I = var_Phi_ii * (var_Vi - V_rev_i);
+	return I;
 }
 /*****************************************************************************************************/
 /**********************************		 		end			 		**********************************/

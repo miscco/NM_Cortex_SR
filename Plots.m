@@ -3,7 +3,7 @@
 
 function Plots(T, onset, Input)
 
-addpath('~/Documents/MATLAB/TC_model/Data');                            % Data folder
+addpath('~/Documents/MATLAB/TC_model/Data');        % Data folder
 
 % load the data the model should be fit to
 load('S13_2');
@@ -28,7 +28,7 @@ end
 
 
 
-[Ve]    = Cortex(Input,T,onset);
+[Ve]    = Cortex(T, onset, Input);
 
 L           = max(size(Ve));
 fs          = L/T;
@@ -45,7 +45,7 @@ time = linspace(0,T,T*100);
 i    = randi([0,239-T],1);
 figure(1)
 subplot(211)
-plot(time,Ve')
+plot(time,zscore(Ve'))
 title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
 subplot(212)
 plot(time,Data(i*100+1:(i+T)*100))
