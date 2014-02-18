@@ -19,8 +19,8 @@ if nargin == 0
                         
     Input_N2    = [ 120;        % N_ee
                     72;			% N_ei
-                    100;        % N_ie
-                    100;        % N_ii
+                    90;        % N_ie
+                    90;        % N_ii
                     2;          % alpha_Na
                     1;          % tau_Na
                     1.33;		% g_KNa

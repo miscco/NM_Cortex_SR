@@ -88,7 +88,7 @@
 #define E_GABA  	-70
 
 // Leak reversal
-#define E_L_e 		-64
+#define E_L_e 		-66
 #define E_L_i 		-64
 
 // Potassium reversal
