@@ -1,3 +1,6 @@
+/****************************************************************************************************/
+/*								Header for Stimulation protocoll object								*/
+/****************************************************************************************************/
 #pragma once
 #include "Cortical_Column.h"
 
@@ -6,7 +9,7 @@ public:
 	// constructor
 	Stim(vector<double> var, Cortical_Column& Column)
 	: strength	(var[0]), 	ISI ((int)var[1]), 	start ((int)var[2]), 	duration ((int)var[3]),
-	  Col		(Column)
+	  Col		(&Column)
 	{}
 
 	void check_stim	(int time) {
@@ -15,7 +18,7 @@ public:
 		if(time==(start + count_stim*ISI)){
 			// turn the stimulation on
 			mode = 1;
-			Col.set_input(strength);
+			Col->set_input(strength);
 
 		}
 
@@ -23,7 +26,7 @@ public:
 		if(mode ==1 && count_dur ==duration) {
 			// turn off the stimulation
 			mode = 0;
-			Col.set_input(0.0);
+			Col->set_input(0.0);
 
 			// add counter for stimulation occurence
 			count_stim++ ;
@@ -62,5 +65,8 @@ private:
 	bool mode = 0;
 
 	// cortical column
-	Cortical_Column& Col;
+	Cortical_Column* Col;
 };
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/

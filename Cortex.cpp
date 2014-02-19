@@ -1,3 +1,6 @@
+/****************************************************************************************************/
+/*									actual MATLAB function routine									*/
+/****************************************************************************************************/
 #include <ctime>
 #include "mex.h"
 #include "matrix.h"
@@ -29,6 +32,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	double* Input	 		= mxGetPr (prhs[2]);
 	double* var_stim	 	= mxGetPr (prhs[3]);
 
+	// scaling from SI to simulation variables s -> ms
 	vector<double> Var_Stim(4);
 	// scale the stimulation strength with respect to ms^-1
 	Var_Stim[0] = var_stim[0] / 1000;
@@ -68,3 +72,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	plhs[0]  = Ve;
 	return;
 }
+/****************************************************************************************************/
+/*												end													*/
+/****************************************************************************************************/
