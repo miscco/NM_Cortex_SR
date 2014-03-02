@@ -13,6 +13,7 @@
 // mex command is given by:
 // mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp
 
+extern const int onset	= 5;
 extern const int res 	= 1E4;
 extern const int red 	= res/100;
 extern const double dt 	= 1E3/res;
@@ -28,29 +29,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
 	// Fetch inputs
 	const int T				= (int) (mxGetScalar(prhs[0]));
-	const int onset			= (int) (mxGetScalar(prhs[1]));
-	double* Input	 		= mxGetPr (prhs[2]);
-	double* var_stim	 	= mxGetPr (prhs[3]);
-
-	// scaling from SI to simulation variables s -> ms
-	vector<double> Var_Stim(4);
-	// scale the stimulation strength with respect to ms^-1
-	Var_Stim[0] = var_stim[0] / 1000;
-
-	// scale the stimulation variables with respect to simulation resolution
-	Var_Stim[1] = var_stim[1] 	* res;
-
-	// stimulation starts after the onset
-	Var_Stim[2] = (var_stim[2] 	+ onset) *res;
-
-	// rescale duration with respect to dt
-	Var_Stim[3] = var_stim[3]/dt;
+	double* Input	 		= mxGetPr (prhs[1]);
+	double* var_stim	 	= mxGetPr (prhs[2]);
 
 	// Initializing the populations;
 	Cortical_Column Col(Input);
 
 	// Initialize the stimulation protocoll
-	Stim	Stimulation(Var_Stim, Col);
+	Stim	Stimulation(Col, Var_Stim);
 
 	// Data container in MATLAB format
 	mxArray* Ve		= SetMexArray(1, T*red);
@@ -64,8 +50,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		ODE (Col);
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-		get_data(count, Col, Pr_Ve);
-		++count;
+			get_data(count, Col, Pr_Ve);
+			++count;
 		}
 	}
 

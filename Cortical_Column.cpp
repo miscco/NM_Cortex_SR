@@ -13,7 +13,7 @@ void Cortical_Column::set_RNG(void) {
 	// get the RNG
 	for (int i=0; i<N; ++i){
 		// add the RNG
-		MTRands.push_back({ENG(rand()), DIST (mphi, dphi)});
+		MTRands.push_back({ENG(rand()), DIST (mphi_c, dphi_c)});
 
 		// get the random number for the first iteration
 		Rand_vars.push_back(MTRands[i]());

@@ -5,25 +5,17 @@ function Plots(T, onset, Input)
 
 if nargin == 0
     % fittet input
-    Input_N3    = [ 120;         % N_ee
-                    72;			% N_ei
-                    100;         % N_ie
-                    100; 		% N_ii
-                    2.6;        % alpha_Na
+    Input_N3    = [ 2.6;        % alpha_Na
                     3;          % tau_Na
-                    1.33		% g_KNa
+                    1.33	% g_KNa
                     -63;        % theta_e
                     8;          % sigma_e
                     30E-3];     % dphi
                         
                         
-    Input_N2    = [ 120;        % N_ee
-                    72;			% N_ei
-                    90;        % N_ie
-                    90;        % N_ii
-                    2;          % alpha_Na
+    Input_N2    = [ 2;          % alpha_Na
                     1;          % tau_Na
-                    1.33;		% g_KNa
+                    1.33;	% g_KNa
                     -58.5;      % theta_e
                     4.25;       % sigma_e
                     30E-3];     % dphi
@@ -33,11 +25,10 @@ if nargin == 0
                     0;          % time until first stimuli in s
                     0];        % duration of the stimulus in ms
     T           =   30;			% duration of the simulation
-    onset       =   10;			% time until data is saved
 end
 
-[Ve_N2]    = Cortex(T, onset, Input_N2, var_stim);
-[Ve_N3]    = Cortex(T, onset, Input_N3, var_stim);
+[Ve_N2]    = Cortex(T, Input_N2, var_stim);
+[Ve_N3]    = Cortex(T, Input_N3, var_stim);
 
 % load the data the model should be fit to
 addpath('~/Documents/MATLAB/TC_model/Data');        % Data folder

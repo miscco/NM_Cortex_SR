@@ -5,7 +5,6 @@
 #include <ctime>
 #include <vector>
 
-#include "randoms.h"
 #include "Cortical_Column.h"
 #include "ODE.h"
 
@@ -19,17 +18,6 @@ extern const double h	= sqrt(dt);
 
 // simulation of the thalamo-cortical model
 int main(void) {
-	// Initializing the mersenne twister.
-	MTRand mtrand;
-
-	//const double	mphi_sc	= 20E-3;
-	//const double	dphi_sc	= 20E-3;
-
-	// creating the random input
-	vector<double> u_e1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
-	vector<double> u_e2 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
-	vector<double> u_i1 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
-	vector<double> u_i2 = rand_var(mtrand, T*res, mphi_sc, dphi_sc);
 
 	// Initializing the populations;
 	Cortical_Column Col;
@@ -40,7 +28,7 @@ int main(void) {
 
 	// simulation
 	for (int t=0; t< T*res; ++t) {
-		ODE (Col, u_e1[t], u_e2[t], u_i1[t], u_i2[t]);
+		ODE (Col);
 	}
 
 	time (&end);

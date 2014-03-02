@@ -1,34 +1,42 @@
-/*****************************************************************************************************/
-/*******************	header file of a complete thalamocirtical module	**************************/
-/*****************************************************************************************************/
+/************************************************************************************************/
+/*								header file of a cortical module								*/
+/************************************************************************************************/
 #pragma once
-#include <iostream>
 #include <cmath>
 #include <vector>
 #include "macros.h"
 #include "parameters.h"
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 using std::vector;
 
-// implementation of the cortical module after Zavaglia2006
+// typedefs for the RNG
+typedef boost::mt11213b                    	ENG;    // Mersenne Twister
+typedef boost::normal_distribution<double>	DIST;   // Normal Distribution
+typedef boost::variate_generator<ENG,DIST> 	GEN;    // Variate generator
 
+// implementation of the cortical module
 class Cortical_Column {
 public:
 	// Constructors
 	Cortical_Column(void)
-	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
-	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
-	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  N_ee  (40), 			N_ei   	(40), 		  	N_ie	(80),		   	N_ii 	(80)
+	: Ve		(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
+	  Phi_ee	(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
+	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
+	  alpha_Na 	(0), 			tau_Na	(0),			g_KNa	(0),	  		theta_e	(0),
+	  sigma_e 	(0), 			dphi_c	(0),			input 	(0)
 	{}
 
 	Cortical_Column(double* Par)
-	: Ve	(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
-	  Phi_ee(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
-	  x_ee 	(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  N_ee  (Par[0]), 	 	N_ei	(Par[1]), 	  	N_ie	(Par[2]),	   	N_ii 	(Par[3]),
-	  alpha_Na (Par[4]), 	tau_Na	(Par[5]),		g_KNa	(Par[6]),
-	  tau_e (Par[7]), 	 	tau_i	(Par[8]), 	  	theta_e	(Par[9]),	   	sigma_e 	(Par[10])
+	: Ve		(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
+	  Phi_ee	(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
+	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
+	  alpha_Na 	(Par[0]), 		tau_Na	(Par[1]),		g_KNa	(Par[2]),	  	theta_e	(Par[3]),
+	  sigma_e 	(Par[4]), 		dphi_c	(30E-3),			input 	(0)
 	{}
+
+	void 	set_RNG		(void);
 
 	// firing rate functions
 	double 	get_Qe		(int) const;
@@ -47,13 +55,13 @@ public:
 	double 	Na_pump		(int) const;
 
 	// noise functions
-	double 	noise_xRK 	(int, double, double) const;
+	double 	noise_xRK 	(int, int) const;
 
 	// ODE functions
-	void 	set_RK		(int, _REPEAT(double, 4));
-	void 	add_RK	 	(_REPEAT(double, 2));
+	void 	set_RK		(int);
+	void 	add_RK	 	(void);
 
-	friend void get_data (int, Cortical_Column&, _REPEAT(vector<double>&, 2));
+	friend void get_data (int, Cortical_Column&, _REPEAT(double*, 1));
 
 private:
 	// population variables
@@ -69,23 +77,23 @@ private:
 					x_ie,		// derivative of Phi_ie
 					x_ii;		// derivative of Phi_ii
 
-	// connectivities
-	double			N_ee,		// exitatory  		  to exitatory
-					N_ei,		// exitatory  		  to inhibitory
-					N_ie,		// inhibitory 		  to exitatory
-					N_ii;		// inhibitory 		  to inhibitory
-
 	// adaption parameters
 	double			alpha_Na,	// Sodium influx per spike
 					tau_Na,		// Sodium time constant
 					g_KNa;		// KNa conductance
 
-	// time constants
-	double			tau_e,		// pyramidal  time constant
-					tau_i;		// inhibitory time constant
-
 	// resting potentials
 	double			theta_e,		// pyramidal  leak
 					sigma_e;		// inhibitory leak
+
+	// Noise parameters
+	double 			dphi_c;
+	double			input;
+
+	// random number generators
+	vector<GEN>		MTRands;
+
+	// container for random numbers
+	vector<double>	Rand_vars;
 };
 

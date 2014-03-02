@@ -1,16 +1,36 @@
 /****************************************************************************************************/
-/*								Header for Stimulation protocoll object								*/
+/*								Implementation of the stimulation protocol							*/
 /****************************************************************************************************/
 #pragma once
 #include "Cortical_Column.h"
 
 class Stim {
 public:
-	// constructor
-	Stim(vector<double> var, Cortical_Column& Column)
-	: strength	(var[0]), 	ISI ((int)var[1]), 	start ((int)var[2]), 	duration ((int)var[3]),
-	  Col		(&Column)
-	{}
+	// empty constructor for compiling
+	Stim(void);
+
+	Stim(Cortical_Column& C, double* var)
+	{Cortex = &C;
+	 setup(var);}
+
+	// scaling from SI to simulation variables s -> ms
+	void setup		(double* var_stim) {
+		extern const int onset;
+		extern const int res;
+		extern const int dt;
+
+		// scale the stimulation strength with respect to ms^-1
+		strength = var_stim[0] / 1000;
+
+		// scale the stimulation variables with respect to simulation resolution
+		ISI 	 = (int) var_stim[1] * res;
+
+		// stimulation starts after the onset
+		start 	 = (int)(var_stim[2] + onset) *res;
+
+		// rescale duration with respect to dt
+		duration = (int) var_stim[3]/dt;
+	}
 
 	void check_stim	(int time) {
 		// check whether a stimulation should start
@@ -18,7 +38,7 @@ public:
 		if(time==(start + count_stim*ISI)){
 			// turn the stimulation on
 			mode = 1;
-			Col->set_input(strength);
+			Cortex->set_input(strength);
 
 		}
 
@@ -26,7 +46,7 @@ public:
 		if(mode ==1 && count_dur ==duration) {
 			// turn off the stimulation
 			mode = 0;
-			Col->set_input(0.0);
+			Cortex->set_input(0.0);
 
 			// add counter for stimulation occurence
 			count_stim++ ;
@@ -44,16 +64,16 @@ public:
 private:
 
 	// stimulation strength
-	double strength;
+	double strength = 0.0;
 
 	// inter stimulus intervall
-	int ISI;
+	int ISI = 0;
 
 	// onset until stimulation starts
-	int start;
+	int start = 0;
 
 	// duiration of the stimulation
-	int duration;
+	int duration = 0;
 
 	// counter for stimulation events
 	int count_stim = 0;
@@ -64,9 +84,9 @@ private:
 	// Simulation on for TRUE and off for FALSE
 	bool mode = 0;
 
-	// cortical column
-	Cortical_Column* Col;
+	// Cortical column
+	Cortical_Column* Cortex;
 };
 /****************************************************************************************************/
-/*										 		end			 										*/
+/*										 		end													*/
 /****************************************************************************************************/

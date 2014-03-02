@@ -1,22 +1,32 @@
-/*****************************************************************************************************/
-/***********************			functions for data storage			******************************/
-/*****************************************************************************************************/
-#include <iostream>
-#include <vector>
+/****************************************************************************************************/
+/*										Functions for data storage									*/
+/****************************************************************************************************/
+#pragma once
 #include "Cortical_Column.h"
-using std::vector;
 
-// saving file for the mex compilation
-
-// function to copy a std::vector into a matlab matrix
-mxArray * getMexArray(const std::vector<double>& v){
-    mxArray * mx = mxCreateDoubleMatrix(1,v.size(), mxREAL);
-    std::copy(v.begin(), v.end(), mxGetPr(mx));
-    return mx;
-}
-
+/****************************************************************************************************/
+/*											save data												*/
+/****************************************************************************************************/
 // saving the fluctuations of the populations
-inline void get_data(int counter, Cortical_Column& Col, vector<double>& Ve, vector<double>& Na) {
-	Ve	 	[counter] = Col.Ve		[0];
-	Na	 	[counter] = Col.Na		[0];
+inline void get_data(int counter, Cortical_Column& Col, double* Ve) {
+	Ve 	[counter] = Col.Ve	[0];
 }
+/****************************************************************************************************/
+/*										 		end													*/
+/****************************************************************************************************/
+
+
+/****************************************************************************************************/
+/*										Create Matlab data container								*/
+/****************************************************************************************************/
+// function to create a MATLAB data container
+mxArray* SetMexArray(int N, int M) {
+	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
+    mxSetM(Array, N);
+    mxSetN(Array, M);
+    mxSetData(Array, mxMalloc(sizeof(double)*M*N));
+    return Array;
+}
+/****************************************************************************************************/
+/*										 		end													*/
+/****************************************************************************************************/
