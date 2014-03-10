@@ -39,7 +39,7 @@ clf
 hold on
 for i=1:40 
     var_stim(1)= i*25;
-    [Ve]    = Cortex(T, Con, var_stim);
+    [Ve]    = Cortex(T, Input_N2, var_stim);
     plot(timeaxis,Ve)
     ylim([-70,-40]);
     title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
