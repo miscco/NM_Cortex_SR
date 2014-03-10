@@ -20,11 +20,11 @@ if nargin == 0
                     4.25;       % sigma_e
                     30E-3];     % dphi
                         
-    var_stim    = [ 0;          % strength of the stimulus in Hz (spikes per second)
-                    0;          % time between   stimuli in s    
-                    0;          % time until first stimuli in s
-                    0];        % duration of the stimulus in ms
-    T           =   30;			% duration of the simulation
+    var_stim    = [ 0;          % strength of the stimulus 	in Hz (spikes per second)
+                    0;          % time between stimuli 		in s    
+                    0;          % time until first stimuli 	in s
+                    0];        	% duration of the stimulus 	in ms
+    T           =   30;		% duration of the simulation
 end
 
 [Ve_N2]    = Cortex(T, Input_N2, var_stim);

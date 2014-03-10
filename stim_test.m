@@ -1,16 +1,14 @@
-Con        = [100;			% N_ee
-                  60;			% N_ei
-                  90;			% N_ie
-                  90]; 			% N_ii
+Con        	= [100;			% N_ee
+                   60;			% N_ei
+                   90;			% N_ie
+                   90]; 		% N_ii
 
-    T          = 5;			% duration of the simulation
-    onset      = 10;			% time until data is saved
+    T          	= 5;			% duration of the simulation
     
-    var_stim   = [1;			% strength of the stimulus
-                  1050E1;		% time until stimulus         in 0.1 ms
-                  50E1;			% duration of the stimulus in 0.1 ms
-                  1;			% number of stimuli
-                  10];			% minimal time between stimulations
+    var_stim    = [ 0;          	% strength of the stimulus 	in Hz (spikes per second)
+                    0;          	% time between stimuli 		in s    
+                    0;          	% time until first stimuli 	in s
+                    0];        		% duration of the stimulus 	in ms
 
 L           = T*100;
 fs          = L/T;
@@ -24,7 +22,7 @@ clf
 hold on
 for i=1:40 
     var_stim(1)= i*0.25E-1;
-    [Ve, Na]    = Cortex(Con, T, onset, var_stim);
+    [Ve, Na]    = Cortex(T, Con, var_stim);
     subplot(211)
     plot(timeaxis,Ve)
     ylim([-70,-40]);
