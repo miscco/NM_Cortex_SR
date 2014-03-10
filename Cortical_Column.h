@@ -11,8 +11,6 @@
 #include "parameters.h"
 using std::vector;
 
-
-
 /****************************************************************************************************/
 /*										Typedefs for RNG											*/
 /****************************************************************************************************/
@@ -36,7 +34,7 @@ public:
 	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
 	  alpha_Na 	(0), 			tau_Na	(0),			g_KNa	(0),	  		theta_e	(0),
 	  sigma_e 	(0), 			dphi_c	(0),			input 	(0.0)
-	{}
+	{set_RNG();}
 
 	Cortical_Column(double* Par)
 	: Ve		(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
@@ -44,10 +42,13 @@ public:
 	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
 	  alpha_Na 	(Par[0]), 		tau_Na	(Par[1]),		g_KNa	(Par[2]),	  	theta_e	(Par[3]),
 	  sigma_e 	(Par[4]), 		dphi_c	(Par[5]),		input 	(0.0)
-	{}
+	{set_RNG();}
 
 	// Initialize the RNGs
 	void 	set_RNG		(void);
+
+	// change the strength of input
+	void	set_input	(double I) {input = I;}
 
 	// Firing rates
 	double 	get_Qe		(int) const;
@@ -76,7 +77,7 @@ public:
 	friend void get_data (int, Cortical_Column&, _REPEAT(double*, 1));
 
 private:
-	// population variables
+	// Population variables
 	vector<double> 	Ve,			// excitatory membrane voltage
 					Vi,			// inhibitory membrane voltage
 					Na,			// Na concentration
@@ -89,7 +90,7 @@ private:
 					x_ie,		// derivative of Phi_ie
 					x_ii;		// derivative of Phi_ii
 
-	// adaption parameters
+	// Adaption parameters
 	double			alpha_Na,	// Sodium influx per spike
 					tau_Na,		// Sodium time constant
 					g_KNa;		// KNa conductance

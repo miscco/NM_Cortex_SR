@@ -5,8 +5,7 @@
 /****************************************************************************************************/
 /*										 Physical properties 										*/
 /****************************************************************************************************/
-// Time constants for exhibitory and inhibitory neurons in ms
-// fitting variables
+// Time constants for excitatory and inhibitory neurons in ms
 #define tau_e 		30
 #define tau_i 		30
 
@@ -15,19 +14,19 @@
 #define Qi_max		60.E-3
 
 // Sigmoid threshold values in mV
-/* fitting variables
+/* fitting variable
 #define theta_e		-58.5
 */
 #define theta_i		-58.5
 
 
-// Standard deviation for threshold in mV
+// Sigmoid gain in mV
 /* fitting variables
 #define sigma_e		4
 */
 #define sigma_i		6
 
-// Parameter for sigmoidal mapping (dimensionless)
+// Scaling parameter for sigmoidal mapping (dimensionless)
 #define C1          (3.14159265/sqrt(3))
 /****************************************************************************************************/
 /*										 		end			 										*/

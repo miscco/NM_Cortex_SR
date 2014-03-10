@@ -37,14 +37,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
 	// Fetch inputs
 	const int T				= (int) (mxGetScalar(prhs[0]));
-	double* Input	 		= mxGetPr (prhs[1]);
+	const int Time 			= (T+onset)*res;
+	double* Param_Cortex	= mxGetPr (prhs[1]);
 	double* var_stim	 	= mxGetPr (prhs[2]);
 
 	// Initializing the populations;
-	Cortical_Column Col(Input);
+	Cortical_Column Cortex(Param_Cortex);
 
 	// Initialize the stimulation protocol
-	Stim	Stimulation(Col, Var_Stim);
+	Stim	Stimulation(Cortex, var_stim);
 
 	// Data container in MATLAB format
 	mxArray* Ve		= SetMexArray(1, T*red);
@@ -55,10 +56,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	// simulation
 	int count = 0;
 	for (int t=0; t<(T+onset)*res; ++t) {
-		ODE (Col);
+		ODE (Cortex);
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-			get_data(count, Col, Pr_Ve);
+			get_data(count, Cortex, Pr_Ve);
 			++count;
 		}
 	}

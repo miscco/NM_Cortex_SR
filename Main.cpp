@@ -21,14 +21,12 @@ extern const double h	= sqrt(dt);
 /****************************************************************************************************/
 
 
-
 /****************************************************************************************************/
 /*										Main simulation routine										*/
 /****************************************************************************************************/
 int main(void) {
-
 	// Initializing the populations;
-	Cortical_Column Col;
+	Cortical_Column Cortex;
 
 	// takes the time of the simulation
 	time_t start,end;
@@ -36,7 +34,7 @@ int main(void) {
 
 	// simulation
 	for (int t=0; t< T*res; ++t) {
-		ODE (Col);
+		ODE (Cortex);
 	}
 
 	time (&end);

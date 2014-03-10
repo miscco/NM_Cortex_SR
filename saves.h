@@ -16,7 +16,7 @@ inline void get_data(int counter, Cortical_Column& Col, double* Ve) {
 
 
 /****************************************************************************************************/
-/*									Create Matlab data container									*/
+/*									Create MATLAB data container									*/
 /****************************************************************************************************/
 mxArray* SetMexArray(int N, int M) {
 	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
