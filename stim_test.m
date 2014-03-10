@@ -1,14 +1,31 @@
-Con        	= [100;			% N_ee
-                   60;			% N_ei
-                   90;			% N_ie
-                   90]; 		% N_ii
+% mex command is given by: 
+% mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp
 
-    T          	= 5;			% duration of the simulation
-    
-    var_stim    = [ 0;          	% strength of the stimulus 	in Hz (spikes per second)
-                    0;          	% time between stimuli 		in s    
-                    0;          	% time until first stimuli 	in s
-                    0];        		% duration of the stimulus 	in ms
+function Plots(T, onset, Input)
+
+if nargin == 0
+    % fittet input
+    Input_N3    = [ 2.6;        % alpha_Na
+                    3;          % tau_Na
+                    1.33	% g_KNa
+                    -63;        % theta_e
+                    8;          % sigma_e
+                    30E-3];     % dphi
+                        
+                        
+    Input_N2    = [ 2;          % alpha_Na
+                    1;          % tau_Na
+                    1.33;	% g_KNa
+                    -58.5;      % theta_e
+                    4.25;       % sigma_e
+                    30E-3];     % dphi
+                        
+    var_stim    = [ 0;		% strength of the stimulus 	in Hz (spikes per second)
+                    10;		% time between stimuli 		in s    
+                    1;          % time until first stimuli 	in s
+                    50];       	% duration of the stimulus 	in ms
+    T           =   5;		% duration of the simulation
+end
 
 L           = T*100;
 fs          = L/T;
@@ -21,16 +38,11 @@ figure(1)
 clf
 hold on
 for i=1:40 
-    var_stim(1)= i*0.25E-1;
-    [Ve, Na]    = Cortex(T, Con, var_stim);
-    subplot(211)
+    var_stim(1)= i*25;
+    [Ve]    = Cortex(T, Con, var_stim);
     plot(timeaxis,Ve)
     ylim([-70,-40]);
     title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-    hold on
-    subplot(212)
-    plot(timeaxis,0.037./(1+(38.7./Na).^3.5))
-    title('pyramidal membrane voltage','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-    hold on
 end
-exportfig(gcf, 'Response.png', 'Format', 'png', 'width', 12.8, 'Color', 'rgb')
+hold off
+end
