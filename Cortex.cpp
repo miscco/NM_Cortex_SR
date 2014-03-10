@@ -1,5 +1,9 @@
 /****************************************************************************************************/
-/*									actual MATLAB function routine									*/
+/* 		Implementation of the simulation as MATLAB routine (mex compiler)							*/
+/* 		mex command is given by:																	*/
+/* 		mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp			*/
+/*		The Simulation requires the following boost libraries:	Preprocessor						*/
+/*																Random								*/
 /****************************************************************************************************/
 #include <ctime>
 #include "mex.h"
@@ -9,20 +13,24 @@
 #include "saves.h"
 #include "ODE.h"
 
-// Implementation of the main file for mex compiler
-// mex command is given by:
-// mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp
-
+/****************************************************************************************************/
+/*										Fixed simulation settings									*/
+/****************************************************************************************************/
 extern const int onset	= 5;
 extern const int res 	= 1E4;
 extern const int red 	= res/100;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/
 
 
-// simulation of the model proposed in Steyn-Ross2004
-
-// input arguments are a vector of length 8 with the connectivities and an integer setting the resolution of the grid
+/****************************************************************************************************/
+/*										Simulation routine	 										*/
+/*										lhs defines outputs											*/
+/*										rhs defines inputs											*/
+/****************************************************************************************************/
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	// Set the seed.
 	srand(time(NULL));
@@ -35,7 +43,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	// Initializing the populations;
 	Cortical_Column Col(Input);
 
-	// Initialize the stimulation protocoll
+	// Initialize the stimulation protocol
 	Stim	Stimulation(Col, Var_Stim);
 
 	// Data container in MATLAB format

@@ -4,6 +4,10 @@
 #pragma once
 #include "Cortical_Column.h"
 
+
+/****************************************************************************************************/
+/*											Stimulation object										*/
+/****************************************************************************************************/
 class Stim {
 public:
 	// empty constructor for compiling
@@ -48,14 +52,14 @@ public:
 			mode = 0;
 			Cortex->set_input(0.0);
 
-			// add counter for stimulation occurence
+			// add counter for stimulation occurrence
 			count_stim++ ;
 
 			// reset the stimulation counter
 			count_dur = 0;
 		}
 
-		// if stimulation is on track its duration
+		// if stimulation is on track count its duration
 		if(mode==1){
 			count_dur++;
 		}
@@ -72,7 +76,7 @@ private:
 	// onset until stimulation starts
 	int start = 0;
 
-	// duiration of the stimulation
+	// duration of the stimulation
 	int duration = 0;
 
 	// counter for stimulation events

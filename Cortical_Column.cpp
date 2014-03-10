@@ -1,7 +1,8 @@
 /****************************************************************************************************/
-/*							function definitions of a cortical module								*/
+/*									Functions of the cortical module								*/
 /****************************************************************************************************/
 #include "Cortical_Column.h"
+
 
 /****************************************************************************************************/
 /*										 Initialization of RNG 										*/
@@ -22,7 +23,6 @@ void Cortical_Column::set_RNG(void) {
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
-
 
 
 /****************************************************************************************************/
@@ -47,7 +47,7 @@ double Cortical_Column::get_Qi	(int N) const{
 
 
 /****************************************************************************************************/
-/*											 synaptic currents										*/
+/*										Synaptic currents											*/
 /****************************************************************************************************/
 // excitatory input to pyramidal population
 double Cortical_Column::I_ee	(int N) const{
@@ -75,11 +75,9 @@ double Cortical_Column::I_ii	(int N) const{
 	double I = var_Phi_ii * (var_Vi - E_GABA);
 	return I;
 }
-
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
-
 
 
 /****************************************************************************************************/
@@ -112,7 +110,7 @@ double Cortical_Column::I_KNa		(int N)  const{
 
 
 /****************************************************************************************************/
-/*									 potassium concentration 										*/
+/*									 		Potassium pump	 										*/
 /****************************************************************************************************/
 double Cortical_Column::Na_pump		(int N) const{
 	_SWITCH((Na))
@@ -127,7 +125,6 @@ double Cortical_Column::Na_pump		(int N) const{
 /****************************************************************************************************/
 /*										 RK noise scaling 											*/
 /****************************************************************************************************/
-// function that returns the noise to exitatory population for stochastic RK4
 double Cortical_Column::noise_xRK(int N, int M) const{
 	extern const double h;
 	extern const vector<double> B1, B2;
@@ -140,10 +137,9 @@ double Cortical_Column::noise_xRK(int N, int M) const{
 
 
 /****************************************************************************************************/
-/*										 	ODE functions 											*/
+/*							Function that calculates the Nth SRK term								*/
 /****************************************************************************************************/
-// function that calculates the Nth RK term
-void Cortical_Column::set_RK		(int N) {
+void Cortical_Column::set_RK (int N) {
 	extern const double dt;
 	_SWITCH((Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)
 			(x_ee) 	(x_ei)	(x_ie)	(x_ii))
@@ -159,8 +155,14 @@ void Cortical_Column::set_RK		(int N) {
 	x_ie  	[N] = dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) 			  		- var_Phi_ie) - 2 * gamma_i * var_x_ie);
 	x_ii  	[N] = dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N)		 	  		- var_Phi_ii) - 2 * gamma_i * var_x_ii);
 }
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/
 
-// function that ads all the RK terms together
+
+/****************************************************************************************************/
+/*									Function that adds all SRK terms									*/
+/****************************************************************************************************/
 void Cortical_Column::add_RK(void) {
 	extern const double h;
 	Ve	  	[0] += (Ve		[1] + Ve	[2] * 2 + Ve	[3] * 2 + Ve	[4])/6;
@@ -174,6 +176,7 @@ void Cortical_Column::add_RK(void) {
 	x_ei  	[0] += (x_ei	[1] + x_ei	[2] * 2 + x_ei	[3] * 2 + x_ei	[4])/6 + pow(gamma_e, 2) * h * Rand_vars[2];
 	x_ie  	[0] += (x_ie	[1] + x_ie	[2] * 2 + x_ie	[3] * 2 + x_ie	[4])/6;
 	x_ii  	[0] += (x_ii	[1] + x_ii	[2] * 2 + x_ii	[3] * 2 + x_ii	[4])/6;
+
 	// generating the noise for the next iteration
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {
 		Rand_vars[i] = MTRands[i]() + input;

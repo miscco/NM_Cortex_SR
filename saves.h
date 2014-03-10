@@ -1,13 +1,12 @@
 /****************************************************************************************************/
-/*										Functions for data storage									*/
+/*									Functions for data storage										*/
 /****************************************************************************************************/
 #pragma once
 #include "Cortical_Column.h"
 
 /****************************************************************************************************/
-/*											save data												*/
+/*											Save data												*/
 /****************************************************************************************************/
-// saving the fluctuations of the populations
 inline void get_data(int counter, Cortical_Column& Col, double* Ve) {
 	Ve 	[counter] = Col.Ve	[0];
 }
@@ -17,9 +16,8 @@ inline void get_data(int counter, Cortical_Column& Col, double* Ve) {
 
 
 /****************************************************************************************************/
-/*										Create Matlab data container								*/
+/*									Create Matlab data container									*/
 /****************************************************************************************************/
-// function to create a MATLAB data container
 mxArray* SetMexArray(int N, int M) {
 	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
     mxSetM(Array, N);
