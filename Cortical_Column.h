@@ -8,7 +8,6 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include "macros.h"
-#include "parameters.h"
 using std::vector;
 
 /****************************************************************************************************/
@@ -29,19 +28,17 @@ class Cortical_Column {
 public:
 	// Constructors
 	Cortical_Column(void)
-	: Ve		(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
-	  Phi_ee	(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
-	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  alpha_Na 	(0), 			tau_Na	(0),			g_KNa	(0),	  		theta_e	(0),
-	  sigma_e 	(0), 			dphi_c	(0),			input 	(0.0)
+	: Ve		(_INIT(E_L_e)),	Vi 	   		(_INIT(E_L_i)),	Na	 		(_INIT(Na_eq)),
+	  Phi_ee	(_INIT(0.0)), 	Phi_ei 		(_INIT(0.0)), 	Phi_ie 		(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
+	  x_ee 		(_INIT(0.0)), 	x_ei   		(_INIT(0.0)),	x_ie   		(_INIT(0.0)), 	x_ii	(_INIT(0.0))
 	{set_RNG();}
 
 	Cortical_Column(double* Par)
-	: Ve		(_INIT(E_L_e)),	Vi 	   	(_INIT(E_L_i)),	Na	 	(_INIT(Na_eq)),
-	  Phi_ee	(_INIT(0.0)), 	Phi_ei 	(_INIT(0.0)), 	Phi_ie 	(_INIT(0.0)), 	Phi_ii	(_INIT(0.0)),
-	  x_ee 		(_INIT(0.0)), 	x_ei   	(_INIT(0.0)),	x_ie   	(_INIT(0.0)), 	x_ii	(_INIT(0.0)),
-	  alpha_Na 	(Par[0]), 		tau_Na	(Par[1]),		g_KNa	(Par[2]),	  	theta_e	(Par[3]),
-	  sigma_e 	(Par[4]), 		dphi_c	(Par[5]),		input 	(0.0)
+	: Ve		(_INIT(E_L_e)),	Vi 	   		(_INIT(E_L_i)),	Na	 		(_INIT(Na_eq)),
+	  Phi_ee	(_INIT(0.0)), 	Phi_ei 		(_INIT(0.0)), 	Phi_ie 		(_INIT(0.0)), 	Phi_ii		(_INIT(0.0)),
+	  x_ee 		(_INIT(0.0)), 	x_ei   		(_INIT(0.0)),	x_ie   		(_INIT(0.0)), 	x_ii		(_INIT(0.0)),
+	  tau_e		(Par[0]), 		theta_e		(Par[1]),		sigma_e 	(Par[2]),		alpha_Na 	(Par[3]),
+	  tau_Na	(Par[4]),	  	g_KNa		(Par[5]),		dphi_c		(Par[6])
 	{set_RNG();}
 
 	// Initialize the RNGs
@@ -90,24 +87,72 @@ private:
 					x_ie,		// derivative of Phi_ie
 					x_ii;		// derivative of Phi_ii
 
-	// Adaption parameters
-	double			alpha_Na,	// Sodium influx per spike
-					tau_Na,		// Sodium time constant
-					g_KNa;		// KNa conductance
-
-	// Firing rate parameters
-	double			theta_e,	// pyramidal firing threshold
-					sigma_e;	// pyramidal gain
-
-	// Noise parameters
-	double 			dphi_c;
-	double			input;
-
 	// Random number generators
 	vector<GEN>		MTRands;
 
 	// Container for noise
 	vector<double>	Rand_vars;
+
+	// Declaration and Initialization of parameters
+	// Membrane time in ms
+	const double 	tau_e 		= 30;
+	const double 	tau_i 		= 30;
+
+	// Maximum firing rate in ms^-1
+	const double 	Qe_max		= 30.E-3;
+	const double 	Qi_max		= 60.E-3;
+
+	// Sigmoid threshold in mV
+	const double 	theta_e		= -58.5;
+	const double 	theta_i		= -58.5;
+
+	// Sigmoid gain in mV
+	const double 	sigma_e		= 4;
+	const double 	sigma_i		= 6;
+
+	// Scaling parameter for sigmoidal mapping (dimensionless)
+	const double 	C1          = (3.14159265/sqrt(3));
+
+	// parameters of the firing adaption
+	const double 	alpha_Na	= 2;			// Sodium influx per spike			in mM ms
+	const double 	tau_Na		= 1;			// Sodium time constant 			in ms
+
+	const double 	R_pump   	= 0.09;        	// Na-K pump  constant              in mM/ms
+	const double 	Na_eq    	= 9.5;         	// Na-eq concentration              in mM
+
+	// PSP rise time in ms^-1
+	const double 	gamma_e		= 70E-3;
+	const double 	gamma_i		= 58.6E-3;
+
+	// Conductivities in mS/cm^-2
+	// Leak current
+	const double 	g_L    		= 1;
+
+	// KNa current
+	const double	g_KNa		= 1.33;
+
+	// Connectivities (dimensionless)
+	const double 	N_ee		= 120;
+	const double 	N_ei		= 70;
+	const double 	N_ie		= 90;
+	const double 	N_ii		= 90;
+
+	// Reversal potentials in mV
+	// synaptic
+	const double 	E_AMPA  	= 0;
+	const double 	E_GABA  	= -70;
+
+	// Leak
+	const double 	E_L_e 		= -64;
+	const double 	E_L_i 		= -64;
+
+	// Potassium
+	const double 	E_K    		= -100;
+
+	// Noise parameters in ms^-1
+	const double 	mphi_c		= 0E-3;
+	const double	dphi_c		= 30E-3;;
+	double			input		= 0.0;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

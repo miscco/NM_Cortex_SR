@@ -31,8 +31,8 @@ public:
 		// stimulation starts after the onset
 		start 	 = (int)(var_stim[2] + onset) *res;
 
-		// rescale duration with respect to dt
-		duration = (int) var_stim[3]/dt;
+		// rescale duration with respect to dt (res timesteps per sec)
+		duration = (int) var_stim[3]*res/1E3;
 	}
 
 	void check_stim	(int time) {
@@ -42,7 +42,6 @@ public:
 			// turn the stimulation on
 			mode = 1;
 			Cortex->set_input(strength);
-
 		}
 
 		// check whether a stimulation should end

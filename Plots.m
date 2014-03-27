@@ -5,28 +5,29 @@ function Plots(T, onset, Input)
 
 if nargin == 0
     % fittet input
-    Input_N3    = [ 2.6;        % alpha_Na
-                    3;          % tau_Na
-                    1.33	% g_KNa
+    Input_N3    = [ 28;         % tau_e
                     -63;        % theta_e
                     8;          % sigma_e
-                    30E-3];     % dphi
+                    2.6;        % alpha_Na
+                    3;          % tau_Na
+                    1.33        % g_KNa
+                    30E-3];      % dphi
                         
                         
-    Input_N2    = [ 2;          % alpha_Na
-                    1;          % tau_Na
-                    1.33;	% g_KNa
+    Input_N2    = [ 30;         % tau_e
                     -58.5;      % theta_e
-                    4.25;       % sigma_e
+                    4;          % sigma_e
+                    2;          % alpha_Na
+                    1;          % tau_Na
+                    1.33;       % g_KNa
                     30E-3];     % dphi
                         
-    var_stim    = [ 0;          % strength of the stimulus 	in Hz (spikes per second)
+    var_stim    = [ 0.0;        % strength of the stimulus 	in Hz (spikes per second)
                     0;          % time between stimuli 		in s    
-                    0;          % time until first stimuli 	in s
-                    0];        	% duration of the stimulus 	in ms
-    T           =   30;		% duration of the simulation
+                    1;          % time until first stimuli 	in s
+                    100];       	% duration of the stimulus 	in ms
+    T           =   30;         % duration of the simulation
 end
-
 [Ve_N2]    = Cortex(T, Input_N2, var_stim);
 [Ve_N3]    = Cortex(T, Input_N3, var_stim);
 
@@ -56,7 +57,6 @@ subplot(212)
 plot(time,Data_N3(i_N3*100+1:(i_N3+T)*100))
 title('EEG trace of N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
 ylim([-5,5]);
-%exportfig(gcf, 'Cortex_N3.png', 'Format', 'png', 'width', 28, 'Color', 'rgb')
 
 
 
@@ -67,7 +67,6 @@ title('Model in N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',Im
 subplot(212)
 plot(time,Data_N2(i_N2*100+1:(i_N2+T)*100))
 title('EEG trace of N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-%exportfig(gcf, 'Cortex_N2.png', 'Format', 'png', 'width', 28, 'Color', 'rgb')
 
 % [Pxx,f] = pwelch(Ve_N2,[], [],[], fs);
 % n       = find(f<=60, 1, 'last' );

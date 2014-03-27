@@ -85,14 +85,14 @@ double Cortical_Column::I_ii	(int N) const{
 // Leak current of pyramidal population
 double Cortical_Column::I_L_e	(int N) const{
 	_SWITCH((Ve))
-	double I = gL_e * (var_Ve - E_L_e);
+	double I = g_L * (var_Ve - E_L_e);
 	return I;
 }
 
 // Leak current of inhibitory population
 double Cortical_Column::I_L_i	(int N) const{
 	_SWITCH((Vi))
-	double I = gL_i * (var_Vi - E_L_i);
+	double I = g_L * (var_Vi - E_L_i);
 	return I;
 }
 

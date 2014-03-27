@@ -16,11 +16,11 @@
 /****************************************************************************************************/
 /*										Fixed simulation settings									*/
 /****************************************************************************************************/
-extern const int onset	= 5;
-extern const int res 	= 1E4;
-extern const int red 	= res/100;
-extern const double dt 	= 1E3/res;
-extern const double h	= sqrt(dt);
+extern const int onset	= 5;								// time until data is stored in  s
+extern const int res 	= 1E4;								// number of iteration steps per s
+extern const int red 	= res/100;							// number of iterations that is saved
+extern const double dt 	= 1E3/res;							// duration of a timestep in ms
+extern const double h	= sqrt(dt);							// squareroot of dt for SRK iteration
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
@@ -36,10 +36,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	srand(time(NULL));
 
 	// Fetch inputs
-	const int T				= (int) (mxGetScalar(prhs[0]));
-	const int Time 			= (T+onset)*res;
-	double* Param_Cortex	= mxGetPr (prhs[1]);
-	double* var_stim	 	= mxGetPr (prhs[2]);
+	const int T				= (int) (mxGetScalar(prhs[0]));	// duration of simulation in s
+	const int Time 			= (T+onset)*res;				// total number of iteration steps
+	double* Param_Cortex	= mxGetPr (prhs[1]);			// parameters of cortical module
+	double* var_stim	 	= mxGetPr (prhs[2]);			// parameters of stimulation protocol
 
 	// Initializing the populations;
 	Cortical_Column Cortex(Param_Cortex);
@@ -48,7 +48,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	Stim	Stimulation(Cortex, var_stim);
 
 	// Data container in MATLAB format
-	mxArray* Ve		= SetMexArray(1, T*red);
+	mxArray* Ve		= SetMexArray(1, T*res/red);
 
 	// Pointer to the actual data block
 	double* Pr_Ve	= mxGetPr(Ve);
