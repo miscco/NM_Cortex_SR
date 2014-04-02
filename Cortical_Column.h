@@ -133,7 +133,7 @@ private:
 
 	// Connectivities (dimensionless)
 	const double 	N_ee		= 120;
-	const double 	N_ei		= 70;
+	const double 	N_ei		= 72;
 	const double 	N_ie		= 90;
 	const double 	N_ii		= 90;
 
@@ -143,7 +143,7 @@ private:
 	const double 	E_GABA  	= -70;
 
 	// Leak
-	const double 	E_L_e 		= -64;
+	const double 	E_L_e 		= -66;
 	const double 	E_L_i 		= -64;
 
 	// Potassium
@@ -153,6 +153,8 @@ private:
 	const double 	mphi_c		= 0E-3;
 	const double	dphi_c		= 30E-3;;
 	double			input		= 0.0;
+
+	friend class Stim;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

@@ -16,9 +16,9 @@ if nargin == 0
                         
     Input_N2    = [ 30;         % tau_e
                     -58.5;      % theta_e
-                    4.25;       % sigma_e
+                    4;       % sigma_e
                     2;          % alpha_Na
-                    1.3;        % tau_Na
+                    1.;        % tau_Na
                     1.33;       % g_KNa
                     0E-3];      % dphi
                         
@@ -35,9 +35,9 @@ timeaxis    = linspace(-1,T-1,L);
 figure(1)
 clf
 hold on
-for i=1:20 
+for i=1:15 
     var_stim(1)= i*20;
-    [Ve]    = Cortex(T, Input_N3, var_stim);
+    [Ve]    = Cortex(T, Input_N2, var_stim);
     plot(timeaxis,Ve)
     ylim([-80,-40]);
     title('pyramidal membrane voltage'),  xlabel('time in s'), ylabel('V_{e} in \muV')
