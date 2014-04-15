@@ -18,22 +18,16 @@ if nargin == 0
 %   3.6  %alphaNa];
 
     % fittet input
-    Input_N3    = [ 24;         % tau_e
-                    -64;        % theta_e
-                    8.3;          % sigma_e
-                    3.6;        % alpha_Na
-                    2.7;          % tau_Na
-                    0.63;        % g_KNa
-                    50E-3];      % dphi
+    Input_N3    = [ 8.5;          % sigma_e
+                    2.7;        % alpha_Na
+                    2;          % tau_Na
+                    60E-3];     % dphi
                         
                         
-    Input_N2    = [ 30;         % tau_e
-                    -58.5;      % theta_e
-                    4.5;          % sigma_e
+    Input_N2    = [ 4.5;        % sigma_e
                     2;          % alpha_Na
-                    1;          % tau_Na
-                    1.33;       % g_KNa
-                    30E-3];     % dphi
+                    1.2;        % tau_Na
+                    60E-3];     % dphi
                      
     % stimulation parameters
     % first number is the mode of stimulation
@@ -42,7 +36,7 @@ if nargin == 0
     % 2 == phase dependend up state
     % 3 == phase dependend down state
     
-    var_stim    = [ 2           % mode of stimulation
+    var_stim    = [ 0           % mode of stimulation
                     100.0;      % strength of the stimulus      in Hz (spikes per second)
                     100;       	% duration of the stimulus      in ms
                     8;          % time between stimuli          in s    
@@ -72,19 +66,8 @@ i_N3    = randi([0,239-T],1);
 
 figure(1)
 subplot(211)
-plot(time,(Ve_N3))
+plot(time,zscore(Ve_N3)')
 title('Model in N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-% positionen für die Marker
-x1 = Marker_N3(1,:)/10000;
-x2 = Marker_N3(2,:)/10000;
-x3 = Marker_N3(3,:)/10000;
-% die Höhe des Markers wird von der Höhe der Axes abgeleitet:
-lim = get(gca,'YLim');
-% Marker zeichen
-h = arrayfun(@(x1) line([x1 x1],lim, 'Color', [0, 0, 0]),x1);
-h = arrayfun(@(x2) line([x2 x2],lim, 'Color', [0, 1, 1]),x2);
-h = arrayfun(@(x3) line([x3 x3],lim, 'Color', [1, 0, 0]),x3);
-
 %ylim([-5,5]);
 subplot(212)
 plot(time,Data_N3(i_N3*100+1:(i_N3+T)*100))
@@ -96,7 +79,7 @@ ylim([-5,5]);
 
 figure(2)
 subplot(211)
-plot(time,(Ve_N2))
+plot(time,zscore(Ve_N2)')
 title('Model in N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
 subplot(212)
 plot(time,Data_N2(i_N2*100+1:(i_N2+T)*100))

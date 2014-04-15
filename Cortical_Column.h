@@ -53,8 +53,7 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Par)
-	 :tau_e		(Par[0]), 		theta_e		(Par[1]),		sigma_e 	(Par[2]),		alpha_Na 	(Par[3]),
-	  tau_Na	(Par[4]),	  	g_KNa		(Par[5]),		dphi_c		(Par[6])
+	 :sigma_e 	(Par[0]),		alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  dphi_c		(Par[3])
 	{set_RNG();}
 
 	// Initialize the RNGs
