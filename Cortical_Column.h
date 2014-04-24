@@ -35,9 +35,9 @@ using std::vector;
 /****************************************************************************************************/
 /*										Typedefs for RNG											*/
 /****************************************************************************************************/
-typedef boost::mt11213b                    	ENG;    // Mersenne Twister
-typedef boost::normal_distribution<double>	DIST;   // Normal Distribution
-typedef boost::variate_generator<ENG,DIST> 	GEN;    // Variate generator
+typedef boost::mt11213b                    	ENG;    /* Mersenne Twister		*/
+typedef boost::normal_distribution<double>	DIST;   /* Normal Distribution	*/
+typedef boost::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
@@ -48,25 +48,25 @@ typedef boost::variate_generator<ENG,DIST> 	GEN;    // Variate generator
 /****************************************************************************************************/
 class Cortical_Column {
 public:
-	// Constructors
+	/* Constructors */
 	Cortical_Column(void)
 	{set_RNG();}
 
 	Cortical_Column(double* Par)
-	 :sigma_e 	(Par[0]),		alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  dphi_c		(Par[3])
+	 :sigma_e 	(Par[0]),		alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  dphi		(Par[3])
 	{set_RNG();}
 
-	// Initialize the RNGs
+	/* Initialize the RNGs */
 	void 	set_RNG		(void);
 
-	// change the strength of input
+	/* Set strength of input */
 	void	set_input	(double I) {input = I;}
 
-	// Firing rates
+	/* Firing rates */
 	double 	get_Qe		(int) const;
 	double 	get_Qi		(int) const;
 
-	// Currents
+	/* Currents */
 	double 	I_ee		(int) const;
 	double 	I_ei		(int) const;
 	double 	I_ie		(int) const;
@@ -75,101 +75,105 @@ public:
 	double 	I_L_i		(int) const;
 	double 	I_KNa		(int) const;
 
-	// Potassium pump
+	/* Potassium pump */
 	double 	Na_pump		(int) const;
 
-	// Noise function
+	/* Noise function */
 	double 	noise_xRK 	(int, int) const;
 
-	// ODE functions
+	/* ODE functions */
 	void 	set_RK		(int);
 	void 	add_RK	 	(void);
 
-	// Data storage
+	/* Data storage  access */
 	friend void get_data (int, Cortical_Column&, _REPEAT(double*, 1));
 
-private:
-	// Population variables
-	vector<double> 	Ve		= _INIT(E_L_e),		// excitatory membrane voltage
-					Vi		= _INIT(E_L_i),		// inhibitory membrane voltage
-					Na		= _INIT(Na_eq),		// Na concentration
-					Phi_ee	= _INIT(0.0),		// PostSP from excitatory to excitatory population
-					Phi_ei	= _INIT(0.0),		// PostSP from excitatory to inhibitory population
-					Phi_ie	= _INIT(0.0),		// PostSP from inhibitory to excitatory population
-					Phi_ii	= _INIT(0.0),		// PostSP from inhibitory to inhibitory population
-					x_ee	= _INIT(0.0),		// derivative of Phi_ee
-					x_ei	= _INIT(0.0),		// derivative of Phi_ei
-					x_ie	= _INIT(0.0),		// derivative of Phi_ie
-					x_ii	= _INIT(0.0);		// derivative of Phi_ii
+	/* Stimulation protocoll acces */
+	friend class Stim;
 
-	// Random number generators
+private:
+	/* Population variables */
+	vector<double> 	Ve		= _INIT(E_L_e),		/* excitatory membrane voltage						*/
+					Vi		= _INIT(E_L_i),		/* inhibitory membrane voltage						*/
+					Na		= _INIT(Na_eq),		/* Na concentration									*/
+					Phi_ee	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
+					Phi_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
+					Phi_ie	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
+					Phi_ii	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
+					x_ee	= _INIT(0.0),		/* derivative of Phi_ee								*/
+					x_ei	= _INIT(0.0),		/* derivative of Phi_ei								*/
+					x_ie	= _INIT(0.0),		/* derivative of Phi_ie				 				*/
+					x_ii	= _INIT(0.0);		/* derivative of Phi_ii 							*/
+
+	/* Random number generators */
 	vector<GEN>		MTRands;
 
-	// Container for noise
+	/* Container for noise */
 	vector<double>	Rand_vars;
 
-	// Declaration and Initialization of parameters
-	// Membrane time in ms
+	/* Declaration and Initialization of parameters */
+	/* Membrane time in ms */
 	const double 	tau_e 		= 30;
 	const double 	tau_i 		= 30;
 
-	// Maximum firing rate in ms^-1
+	/* Maximum firing rate in ms^-1 */
 	const double 	Qe_max		= 30.E-3;
 	const double 	Qi_max		= 60.E-3;
 
-	// Sigmoid threshold in mV
+	/* Sigmoid threshold in mV */
 	const double 	theta_e		= -58.5;
 	const double 	theta_i		= -58.5;
 
-	// Sigmoid gain in mV
+	/* Sigmoid gain in mV */
 	const double 	sigma_e		= 4;
 	const double 	sigma_i		= 6;
 
-	// Scaling parameter for sigmoidal mapping (dimensionless)
+	/* Scaling parameter for sigmoidal mapping (dimensionless) */
 	const double 	C1          = (3.14159265/sqrt(3));
 
-	// parameters of the firing adaption
-	const double 	alpha_Na	= 2;			// Sodium influx per spike			in mM ms
-	const double 	tau_Na		= 1;			// Sodium time constant 			in ms
+	/* Parameters of the firing adaption */
+	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
+	const double 	tau_Na		= 1;			/* Sodium time constant 			in ms 		*/
 
-	const double 	R_pump   	= 0.09;        	// Na-K pump  constant              in mM/ms
-	const double 	Na_eq    	= 9.5;         	// Na-eq concentration              in mM
+	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
+	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
 
-	// PSP rise time in ms^-1
+	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
 	const double 	gamma_i		= 58.6E-3;
 
-	// Conductivities in mS/cm^-2
-	// Leak current
+	/* Axonal flux time constant */
+	const double 	nu			= 120E-3;
+
+	/* Conductivities in mS/cm^-2 */
+	/* Leak */
 	const double 	g_L    		= 1;
 
-	// KNa current
+	/* KNa */
 	const double	g_KNa		= 1.33;
 
-	// Connectivities (dimensionless)
+	/* Connectivities (dimensionless) */
 	const double 	N_ee		= 120;
 	const double 	N_ei		= 72;
 	const double 	N_ie		= 90;
 	const double 	N_ii		= 90;
 
-	// Reversal potentials in mV
-	// synaptic
+	/* Reversal potentials in mV */
+	/* synaptic */
 	const double 	E_AMPA  	= 0;
 	const double 	E_GABA  	= -70;
 
-	// Leak
+	/* Leak */
 	const double 	E_L_e 		= -66;
 	const double 	E_L_i 		= -64;
 
-	// Potassium
+	/* Potassium */
 	const double 	E_K    		= -100;
 
-	// Noise parameters in ms^-1
-	const double 	mphi_c		= 0E-3;
-	const double	dphi_c		= 30E-3;;
+	/* Noise parameters in ms^-1 */
+	const double 	mphi		= 0E-3;
+	const double	dphi		= 60E-3;;
 	double			input		= 0.0;
-
-	friend class Stim;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

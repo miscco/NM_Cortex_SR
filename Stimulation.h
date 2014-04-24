@@ -31,32 +31,32 @@
 /****************************************************************************************************/
 class Stim {
 public:
-	/* empty constructor for compiling */
+	/* Empty constructor for compiling */
 	Stim(void);
 
 	Stim(Cortical_Column& C, double* var)
 	{ Cortex = &C;
 	  setup(var);}
 
-	/* setup with respect to stimulation mode */
+	/* Setup with respect to stimulation mode */
 	void setup		(double* var_stim) {
 		extern const int onset;
 		extern const int res;
 		extern const int dt;
 
-		/* mode of stimulation */
+		/* Mode of stimulation */
 		mode		= (int) var_stim[0];
 
-		/* scale the stimulation strength from s^-1 to ms^-1 */
+		/* Scale the stimulation strength from s^-1 to ms^-1 */
 		strength 	= 		var_stim[1] / 1000;
 
-		/* scale duration from ms to dt */
+		/* Scale duration from ms to dt */
 		duration 	= (int) var_stim[2] * res / 1000;
 
-		/* scale the ISI from s to ms^-1 */
+		/* Scale the ISI from s to ms^-1 */
 		ISI 		= (int) var_stim[3] * res;
 
-		/* scale time to stimulus from ms to dt */
+		/* Scale time to stimulus from ms to dt */
 		time_to_stim= (int) var_stim[4] * res / 1000;
 
 		if(mode==1) {
@@ -69,22 +69,22 @@ public:
 
 	void check_stim	(int time) {
 
-		/* check if stimulation should start */
+		/* Check if stimulation should start */
 		switch (mode) {
 
-		/* no stimulation */
+		/* No stimulation */
 		default:
 			break;
 
-		/* periodic stimulation */
+		/* Periodic stimulation */
 		case 1:
-			/* check if time is reached */
+			/* Check if time is reached */
 			if(time == time_to_stim) {
-				/* switch stimulation on */
+				/* Switch stimulation on */
 				stimulation_started 	= true;
 				Cortex->set_input(strength);
 
-				/* update the timer */
+				/* Update the timer */
 				time_to_stim += ISI;
 
 
@@ -94,9 +94,9 @@ public:
 			}
 			break;
 
-		/* phase dependent up state stimulation */
+		/* Phase dependent up state stimulation */
 		case 2:
-			/* search for threshold */
+			/* Search for threshold */
 			if(!stimulation_started && !minimum_found && !threshold_crossed && time>correction) {
 				if(Cortex->Ve[0]<=threshold) {
 					threshold_crossed 	= true;
@@ -104,7 +104,7 @@ public:
 				}
 			}
 
-			/* search for minimum */
+			/* Search for minimum */
 			if(threshold_crossed) {
 				if(Cortex->Ve[0]>Ve_old) {
 					threshold_crossed 	= false;
@@ -116,12 +116,12 @@ public:
 				}
 			}
 
-			/* wait until the stimulation should start */
+			/* Wait until the stimulation should start */
 			if(minimum_found) {
 				count_to_start++;
 
 
-				/* start stimulation after time_to_stim has passed */
+				/* Start stimulation after time_to_stim has passed */
 				if(count_to_start==time_to_stim) {
 					minimum_found 			= false;
 					stimulation_started 	= true;
@@ -132,9 +132,9 @@ public:
 			}
 			break;
 
-		/* phase dependent down state stimulation */
+		/* Phase dependent down state stimulation */
 		case 3:
-				/* search for threshold */
+				/* Search for threshold */
 				if(!stimulation_started && !minimum_found && !threshold_crossed && time>correction) {
 					if(Cortex->Ve[0]<=threshold) {
 						threshold_crossed 		= true;
@@ -142,7 +142,7 @@ public:
 					}
 				}
 
-				/* search for minimum */
+				/* Search for minimum */
 				if(threshold_crossed) {
 					if(Cortex->Ve[0]>Ve_old) {
 						threshold_crossed 		= false;
@@ -154,7 +154,7 @@ public:
 					}
 				}
 
-				/* start the stimulation */
+				/* Start the stimulation */
 				if(minimum_found) {
 					minimum_found 			= false;
 					stimulation_started 	= true;
@@ -164,11 +164,11 @@ public:
 				break;
 		}
 
-		/* wait to switch the stimulation off */
+		/* Wait to switch the stimulation off */
 		if(stimulation_started) {
 			count_duration++;
 
-			/* switch stimulation off */
+			/* Switch stimulation off */
 			if(count_duration==duration) {
 				stimulation_started 	= false;
 				count_duration			= 0;
@@ -177,6 +177,7 @@ public:
 		}
 	}
 
+	/* Create MATLAB container for marker storage */
 	mxArray* get_marker(void) {
 		mxArray* Marker	= mxCreateDoubleMatrix(0, 0, mxREAL);
 	    mxSetM(Marker, 3);
@@ -194,22 +195,22 @@ public:
 private:
 
 	/* Stimulation parameters */
-	/* stimulation strength */
+	/* Stimulation strength */
 	double strength 	= 0.0;
 
-	/* duration of the stimulation */
+	/* Duration of the stimulation */
 	int duration 		= 500;
 
-	/* inter stimulus intervall in case of periodic stimulation */
+	/* Inter stimulus intervall in case of periodic stimulation */
 	int ISI				= 5E4;
 
-	/* threshold for phase dependent stimulation */
+	/* Threshold for phase dependent stimulation */
 	double threshold	= -80;
 
-	/* time until stimulus after minimum was found */
+	/* Time until stimulus after minimum was found */
 	int	time_to_stim	= 5500;
 
-	/* mode of stimulation 				*/
+	/* Mode of stimulation 				*/
 	/* 0 == none 						*/
 	/* 1 == periodic 					*/
 	/* 2 == phase dependent up state 	*/
@@ -220,25 +221,25 @@ private:
 	/* Simulation on for TRUE and off for FALSE */
 	bool stimulation_started= false;
 
-	/* threshold has been reached */
+	/* Threshold has been reached */
 	bool threshold_crossed	= false;
 
-	/* minimum found */
+	/* Minimum found */
 	bool minimum_found		= false;
 
-	/* onset in timesteps to correct the given time of the markers */
+	/* Onset in timesteps to correct the given time of the markers */
 	int correction			= 10000;
 
-	/* counter for stimulation duration */
+	/* Counter for stimulation duration */
 	int count_duration		= 0;
 
-	/* counter after minimum */
+	/* Counter after minimum */
 	int count_to_start 		= 0;
 
-	/* old voltage value for minimum detection */
+	/* Old voltage value for minimum detection */
 	double Ve_old			= 0;
 
-	/* pointer to cortical column */
+	/* Pointer to cortical column */
 	Cortical_Column* Cortex;
 
 	/* Data containers */

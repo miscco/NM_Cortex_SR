@@ -30,13 +30,12 @@
 /*										Evaluation of SRK4											*/
 /****************************************************************************************************/
 void ODE(Cortical_Column& Cortex) {
-	// first calculating every ith RK moment
-	// has to be in order, 1th moment first
+	/* First calculating every ith RK moment. Has to be in order, 1th moment first */
 	for (int i=1; i<=4; ++i) {
 		Cortex.set_RK(i);
 	}
 
-	// Adding all moments up
+	/* Add all moments */
 	Cortex.add_RK();
 
 }

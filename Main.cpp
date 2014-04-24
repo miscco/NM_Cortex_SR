@@ -47,20 +47,20 @@ extern const double h	= sqrt(dt);
 /*										Main simulation routine										*/
 /****************************************************************************************************/
 int main(void) {
-	// Initializing the populations;
+	/* Initializing the populations */
 	Cortical_Column Cortex;
 
-	// takes the time of the simulation
+	/* Take the time of the simulation */
 	time_t start,end;
 	time (&start);
 
-	// simulation
+	/* Simulation */
 	for (int t=0; t< T*res; ++t) {
 		ODE (Cortex);
 	}
 
 	time (&end);
-	// time consumed by the simulation
+	/* Time consumed by the simulation */
 	double dif = difftime(end,start);
 	std::cout << "simulation done!\n";
 	std::cout << "took " << dif 	<< " seconds" << "\n";
