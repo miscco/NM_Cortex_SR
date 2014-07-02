@@ -1,14 +1,14 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp
 
 function Plots(T)
 
 if nargin == 0
-    Input_N3    = [ 8.7;          % sigma_e
-                    2.6;        % alpha_Na
-                    3;          % tau_Na
-                    1.6;        % g_KNa
-                    60E-3];     % dphi
+    Input_N3    = [ 6.6;          % sigma_e
+                    2;          % alpha_Na
+                    1;          % tau_Na
+                    2;        % g_KNa
+                    120E-3];      % dphi
                         
                         
     Input_N2    = [ 4.6;        % sigma_e
@@ -50,9 +50,9 @@ time = linspace(0,T,T*100);
 
 figure(1)
 subplot(211)
-plot(time,zscore(Ve_N3)')
+plot(time,(Ve_N3)')
 title('Model in N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-ylim([-5,5]);
+%ylim([-5,5]);
 subplot(212)
 plot(time,Data_N3)
 title('EEG trace of N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
@@ -67,10 +67,3 @@ ylim([-5,5]);
 % plot(time,Data_N2)
 % ylim([-8,8]);
 % title('EEG trace of N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-
-load('/home/schellenberger/workspace/C_model/Data/EEG_Data_N3b.mat')
-timeaxis=linspace(0,30,3000);
-for i=1:8 subplot(211); plot(timeaxis,zscore(Ve_N3)'); ylim([-4,4]); subplot(212); plot(timeaxis, zscore(data((i-1)*3000+1:i*3000))'); ylim([-4,4]);pause; end
-
-
-end

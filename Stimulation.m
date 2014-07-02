@@ -1,14 +1,14 @@
 function Stimulation
-    Input_N3    = [ 8.7;        % sigma_e
-                    2.6;        % alpha_Na
-                    3;          % tau_Na
-                    1.6;        % g_KNa
+    Input_N3    = [ 6.5;          % sigma_e
+                    2;          % alpha_Na
+                    1;          % tau_Na
+                    2;        % g_KNa
                     0E-3];      % dphi
                         
                         
     Input_N2    = [ 4.6;        % sigma_e
                     2;          % alpha_Na
-                    1.2;        % tau_Na
+                    1;          % tau_Na
                     1.33;       % g_KNa
                     0E-3];      % dphi
             
@@ -25,7 +25,7 @@ var_stim    = [ 1           % mode of stimulation
                 550];       % time until stimuli after min 	in ms    
             
 % Number of runs for stimulation, as well as color set            
-N = 20;
+N = 15;
 ColorSet = colormap(jet(N));
 
 % time of the stimulation
