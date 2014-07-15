@@ -4,18 +4,14 @@
 function Plots(T)
 
 if nargin == 0
-    Input_N3    = [ 6.6;          % sigma_e
-                    2;          % alpha_Na
-                    1;          % tau_Na
-                    2;        % g_KNa
-                    120E-3];      % dphi
+    Input_N3    = [ 6.6;	% sigma_e
+                    2;		% g_KNa
+                    120E-3];	% dphi
                         
                         
-    Input_N2    = [ 4.6;        % sigma_e
-                    2;          % alpha_Na
-                    1.2;        % tau_Na
-                    1.33;       % g_KNa
-                    60E-3];     % dphi
+    Input_N2    = [ 4.6;	% sigma_e
+                    1.33;	% g_KNa
+                    60E-3];	% dphi
                      
     % stimulation parameters
     % first number is the mode of stimulation
