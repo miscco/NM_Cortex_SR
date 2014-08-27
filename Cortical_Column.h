@@ -84,6 +84,7 @@ public:
 	/* ODE functions */
 	void 	set_RK		(int);
 	void 	add_RK	 	(void);
+	void	iterate_ODE	(void);
 
 	/* Data storage  access */
 	friend void get_data (int, Cortical_Column&, _REPEAT(double*, 1));
@@ -142,21 +143,12 @@ private:
 	const double 	gamma_e		= 70E-3;
 	const double 	gamma_i		= 58.6E-3;
 
-	/* Axonal flux time constant */
-	const double 	nu			= 120E-3;
-
 	/* Conductivities in mS/cm^-2 */
 	/* Leak */
 	const double 	g_L    		= 1;
 
 	/* KNa */
 	const double	g_KNa		= 1.33;
-
-	/* Connectivities (dimensionless) */
-	const double 	N_ee		= 120;
-	const double 	N_ei		= 72;
-	const double 	N_ie		= 90;
-	const double 	N_ii		= 90;
 
 	/* Reversal potentials in mV */
 	/* synaptic */
@@ -174,6 +166,12 @@ private:
 	const double 	mphi		= 0E-3;
 	const double	dphi		= 60E-3;;
 	double			input		= 0.0;
+
+	/* Connectivities (dimensionless) */
+	const double 	N_ee		= 120;
+	const double 	N_ei		= 72;
+	const double 	N_ie		= 90;
+	const double 	N_ii		= 90;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

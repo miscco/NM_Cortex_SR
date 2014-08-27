@@ -4,14 +4,14 @@
 function Plots(T)
 
 if nargin == 0
-    Input_N3    = [ 6.6;	% sigma_e
-                    2;		% g_KNa
+    Input_N3    = [ 6.7;        % sigma_e
+                    2;          % g_KNa
                     120E-3];	% dphi
                         
                         
-    Input_N2    = [ 4.6;	% sigma_e
-                    1.33;	% g_KNa
-                    60E-3];	% dphi
+    Input_N2    = [ 4.6;        % sigma_e
+                    1.33;       % g_KNa
+                    120E-3];	% dphi
                      
     % stimulation parameters
     % first number is the mode of stimulation
@@ -28,7 +28,7 @@ if nargin == 0
                 
     T           =   30;         % duration of the simulation
 end
-%[Ve_N2, ~]    = Cortex(T, Input_N2, var_stim);
+[Ve_N2, ~]    = Cortex(T, Input_N2, var_stim);
 [Ve_N3, ~]    = Cortex(T, Input_N3, var_stim);
 
 % load the data the model should be fit to
@@ -46,20 +46,21 @@ time = linspace(0,T,T*100);
 
 figure(1)
 subplot(211)
-plot(time,(Ve_N3)')
+plot(time,zscore(Ve_N3)')
 title('Model in N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-%ylim([-5,5]);
+ylim([-5,5]);
 subplot(212)
 plot(time,Data_N3)
 title('EEG trace of N3','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
 ylim([-5,5]);
-% 
-% figure(2)
-% subplot(211)
-% plot(time,zscore(Ve_N2)')
-% ylim([-8,8]);
-% title('Model in N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
-% subplot(212)
-% plot(time,Data_N2)
-% ylim([-8,8]);
-% title('EEG trace of N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
+
+
+figure(2)
+subplot(211)
+plot(time,zscore(Ve_N2)')
+ylim([-8,8]);
+title('Model in N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
+subplot(212)
+plot(time,Data_N2)
+ylim([-8,8]);
+title('EEG trace of N2','FontSize',TitleFontSize),  xlabel('time in s','FontSize',ImageFontSize), ylabel('V_{e} in \muV','FontSize',ImageFontSize)
