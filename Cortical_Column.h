@@ -35,9 +35,9 @@ using std::vector;
 /****************************************************************************************************/
 /*										Typedefs for RNG											*/
 /****************************************************************************************************/
-typedef boost::mt11213b                    	ENG;    /* Mersenne Twister		*/
-typedef boost::normal_distribution<double>	DIST;   /* Normal Distribution	*/
-typedef boost::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
+typedef boost::random::mt11213b                    	ENG;    /* Mersenne Twister		*/
+typedef boost::random::normal_distribution<double>	DIST;   /* Normal Distribution	*/
+typedef boost::random::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
@@ -53,7 +53,7 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Par)
-	 :sigma_e 	(Par[0]),	  g_KNa		(Par[1]),	  dphi		(Par[2])
+	 :sigma_e 	(Par[0]),	  g_KNa		(Par[1]),	dphi		(Par[2])
 	{set_RNG();}
 
 	/* Initialize the RNGs */
@@ -89,7 +89,7 @@ public:
 	/* Data storage  access */
 	friend void get_data (int, Cortical_Column&, _REPEAT(double*, 1));
 
-	/* Stimulation protocoll acces */
+	/* Stimulation protocol access */
 	friend class Stim;
 
 private:
@@ -134,10 +134,10 @@ private:
 
 	/* Parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1;			/* Sodium time constant 			in ms 		*/
+	const double 	tau_Na		= 1;			/* Sodium time constant				in ms 		*/
 
-	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
-	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
+	const double 	R_pump   	= 0.09;        	/* Na-K pump constant				in mM/ms 	*/
+	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration				in mM 		*/
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
@@ -151,7 +151,7 @@ private:
 	const double	g_KNa		= 1.33;
 
 	/* Reversal potentials in mV */
-	/* synaptic */
+	/* Synaptic */
 	const double 	E_AMPA  	= 0;
 	const double 	E_GABA  	= -70;
 

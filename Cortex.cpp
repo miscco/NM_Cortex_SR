@@ -23,7 +23,7 @@
 /****************************************************************************************************/
 /* 		Implementation of the simulation as MATLAB routine (mex compiler)							*/
 /* 		mex command is given by:																	*/
-/* 		mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" Cortex.cpp Cortical_Column.cpp			*/
+/* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp						*/
 /*		The Simulation requires the following boost libraries:	Preprocessor						*/
 /*																Random								*/
 /****************************************************************************************************/
@@ -37,11 +37,11 @@
 /****************************************************************************************************/
 /*										Fixed simulation settings									*/
 /****************************************************************************************************/
-extern const int onset	= 30;								/* Time until data is stored in  s		*/
+extern const int onset	= 10;								/* Time until data is stored in  s		*/
 extern const int res 	= 1E4;								/* Number of iteration steps per s		*/
-extern const int red 	= res/100;							/* Number of iterations that is saved	*/
-extern const double dt 	= 1E3/res;							/* Duration of a timestep in ms			*/
-extern const double h	= sqrt(dt);							/* Squareroot of dt for SRK iteration	*/
+extern const int red 	= 1E2;								/* Number of iterations steps not saved	*/
+extern const double dt 	= 1E3/res;							/* Duration of a time step in ms		*/
+extern const double h	= sqrt(dt);							/* Square root of dt for SRK iteration	*/
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
