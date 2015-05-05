@@ -27,7 +27,6 @@
 /*		The Simulation requires the following boost libraries:	Preprocessor						*/
 /*																Random								*/
 /****************************************************************************************************/
-#include <ctime>
 #include "mex.h"
 #include "matrix.h"
 #include "Cortical_Column.h"
@@ -45,23 +44,6 @@ extern const double h	= sqrt(dt);							/* Square root of dt for SRK iteration	*
 /****************************************************************************************************/
 /*										 		end			 										*/
 /****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*									Constants for SRK4 integration									*/
-/****************************************************************************************************/
-extern const vector<double> B1 = {0,
-								  0.626708569400000081728308032325,
-								  1.7296310295000001389098542858846,
-		 	 	 	 	 	 	  1.2703689705000000831347506391467};
-extern const vector<double> B2 = {0,
-								  0.78000033203198970710445792065002,
-								  1.28727807507536762265942797967,
-								  0.44477273249350995909523476257164};
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/
-
 
 /****************************************************************************************************/
 /*										Simulation routine	 										*/
@@ -86,9 +68,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
 	/* Data container in MATLAB format */
 	mxArray* Ve		= SetMexArray(1, T*res/red);
+	mxArray* Na		= SetMexArray(1, T*res/red);
+	mxArray* S_ee	= SetMexArray(1, T*res/red);
+	mxArray* S_ei	= SetMexArray(1, T*res/red);
+	mxArray* S_ie	= SetMexArray(1, T*res/red);
+	mxArray* S_ii	= SetMexArray(1, T*res/red);
 
 	/* Pointer to the actual data block */
 	double* Pr_Ve	= mxGetPr(Ve);
+	double* Pr_Na	= mxGetPr(Na);
+	double* Pr_S_ee	= mxGetPr(S_ee);
+	double* Pr_S_ei	= mxGetPr(S_ei);
+	double* Pr_S_ie	= mxGetPr(S_ie);
+	double* Pr_S_ii	= mxGetPr(S_ii);
 
 	/* Simulation */
 	int count = 0;
@@ -96,13 +88,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		Cortex.iterate_ODE();
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-			get_data(count, Cortex, Pr_Ve);
+			get_data(count, Cortex, Pr_Ve, Pr_Na, Pr_S_ee, Pr_S_ei, Pr_S_ie, Pr_S_ii);
 			++count;
 		}
 	}
 
 	plhs[0] = Ve;
-	plhs[1] = Stimulation.get_marker();
+	plhs[1] = Na;
+	plhs[2] = S_ee;
+	plhs[3] = S_ei;
+	plhs[4] = S_ie;
+	plhs[5] = S_ii;
+	plhs[6] = Stimulation.get_marker();
 	return;
 }
 /****************************************************************************************************/

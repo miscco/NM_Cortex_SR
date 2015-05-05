@@ -26,20 +26,50 @@
 #include "Cortical_Column.h"
 
 /****************************************************************************************************/
+/*									Parameters for SRK4	iteration									*/
+/****************************************************************************************************/
+extern const vector<double> A = {0.5, 0.5, 1.0, 1.0};
+extern const vector<double> B = {0.75, 0.75, 0.0, 0.0};
+/****************************************************************************************************/
+/*										 		end													*/
+/****************************************************************************************************/
+
+
+/****************************************************************************************************/
 /*										 Initialization of RNG 										*/
 /****************************************************************************************************/
 void Cortical_Column::set_RNG(void) {
-	/* Number of independent streams */
-	int N = 4;
+    extern const double dt;
+    /* Number of independent random variables */
+    int N = 2;
 
-	/* Create RNG for each stream */
-	for (int i=0; i<N; ++i){
-		/* Add the RNG */
-		MTRands.push_back({ENG(rand()), DIST (mphi, sqrt(dphi))});
+    /* Create RNG for each stream */
+    for (int i=0; i<N; ++i){
+        /* Add the RNG for I_{l}*/
+        MTRands.push_back({ENG(rand()), DIST (0.0, dphi*dt)});
 
-		/* Get the random number for the first iteration */
-		Rand_vars.push_back(MTRands[i]());
-	}
+        /* Add the RNG for I_{l,0} */
+        MTRands.push_back({ENG(rand()), DIST (0.0, dt)});
+
+        /* Get the random number for the first iteration */
+        Rand_vars.push_back(MTRands[2*i]());
+        Rand_vars.push_back(MTRands[2*i+1]());
+    }
+}
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/
+
+
+/****************************************************************************************************/
+/*										 RK noise scaling 											*/
+/****************************************************************************************************/
+double Cortical_Column::noise_xRK(int N, int M) const{
+    return gamma_e * gamma_e * (Rand_vars[2*M] + Rand_vars[2*M+1]/std::sqrt(3))*B[N];
+}
+
+double Cortical_Column::noise_aRK(int M) const{
+    return gamma_e * gamma_e * (Rand_vars[2*M] - Rand_vars[2*M+1]*std::sqrt(3))/4;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -51,15 +81,13 @@ void Cortical_Column::set_RNG(void) {
 /****************************************************************************************************/
 /* Pyramidal firing rate */
 double Cortical_Column::get_Qe	(int N) const{
-	_SWITCH((Ve))
-	double q = Qe_max / (1 + exp(-C1 * (var_Ve - theta_e) / sigma_e));
+    double q = Qe_max / (1 + exp(-C1 * (Ve[N] - theta_e) / sigma_e));
 	return q;
 }
 
 /* Inhibitory firing rate */
 double Cortical_Column::get_Qi	(int N) const{
-	_SWITCH((Vi))
-	double q = Qi_max / (1 + exp(-C1 * (var_Vi - theta_i) / sigma_i));
+    double q = Qi_max / (1 + exp(-C1 * (Vi[N] - theta_i) / sigma_i));
 	return q;
 }
 /****************************************************************************************************/
@@ -72,28 +100,24 @@ double Cortical_Column::get_Qi	(int N) const{
 /****************************************************************************************************/
 /* Excitatory input to pyramidal population */
 double Cortical_Column::I_ee	(int N) const{
-	_SWITCH((Ve)(Phi_ee))
-	double I = var_Phi_ee * (var_Ve - E_AMPA);
+    double I = y_ee[N] * (Ve[N] - E_AMPA);
 	return I;
 }
 
 /* Inhibitory input to pyramidal population */
 double Cortical_Column::I_ie	(int N) const{
-	_SWITCH((Ve)(Phi_ie))
-	double I = var_Phi_ie * (var_Ve - E_GABA);
+    double I = y_ie[N] * (Ve[N] - E_GABA);
 	return I;
 }
 /* Excitatory input to inhibitory population */
 double Cortical_Column::I_ei	(int N) const{
-	_SWITCH((Vi)(Phi_ei))
-	double I = var_Phi_ei * (var_Vi - E_AMPA);
+    double I = y_ei[N] * (Vi[N] - E_AMPA);
 	return I;
 }
 
 /* Inhibitory input to inhibitory population */
 double Cortical_Column::I_ii	(int N) const{
-	_SWITCH((Vi)(Phi_ii))
-	double I = var_Phi_ii * (var_Vi - E_GABA);
+    double I = y_ii[N] * (Vi[N] - E_GABA);
 	return I;
 }
 /****************************************************************************************************/
@@ -106,23 +130,20 @@ double Cortical_Column::I_ii	(int N) const{
 /****************************************************************************************************/
 /* Leak current of pyramidal population */
 double Cortical_Column::I_L_e	(int N) const{
-	_SWITCH((Ve))
-	double I = g_L * (var_Ve - E_L_e);
+    double I = g_L * (Ve[N] - E_L_e);
 	return I;
 }
 
 /* Leak current of inhibitory population */
 double Cortical_Column::I_L_i	(int N) const{
-	_SWITCH((Vi))
-	double I = g_L * (var_Vi - E_L_i);
+    double I = g_L * (Vi[N] - E_L_i);
 	return I;
 }
 
 /* Sodium dependent potassium current */
 double Cortical_Column::I_KNa		(int N)  const{
-	_SWITCH((Ve)(Na))
-	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
-	double I_KNa  = g_KNa * w_KNa * (var_Ve - E_K);
+    double w_KNa  = 0.37/(1+pow(38.7/Na[N], 3.5));
+    double I_KNa  = g_KNa * w_KNa * (Ve[N] - E_K);
 	return I_KNa;
 }
 /****************************************************************************************************/
@@ -134,23 +155,8 @@ double Cortical_Column::I_KNa		(int N)  const{
 /*									 		Potassium pump	 										*/
 /****************************************************************************************************/
 double Cortical_Column::Na_pump		(int N) const{
-	_SWITCH((Na))
-	double Na_pump = R_pump*( pow(var_Na, 3)/(pow(var_Na, 3)+3375)  -  pow(Na_eq, 3)/(pow(Na_eq, 3)+3375));
+    double Na_pump = R_pump*(pow(Na[N], 3)/(pow(Na[N], 3)+3375) -pow(Na_eq, 3)/(pow(Na_eq, 3)+3375));
 	return Na_pump;
-}
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*										 RK noise scaling 											*/
-/****************************************************************************************************/
-double Cortical_Column::noise_xRK(int N, int M) const{
-	extern const double h;
-	extern const vector<double> B1, B2;
-	double n = 1  / h * (B1[N-1] * Rand_vars[2*M] + B2[N-1] * Rand_vars[2*M+1]);
-	return n;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -161,20 +167,18 @@ double Cortical_Column::noise_xRK(int N, int M) const{
 /*										Calculate the Nth SRK term									*/
 /****************************************************************************************************/
 void Cortical_Column::set_RK (int N) {
-	extern const double dt;
-	_SWITCH((Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)
-			(x_ee) 	(x_ei)	(x_ie)	(x_ii))
-	Ve	  	[N] = dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
-	Vi	  	[N] = dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
-	Na		[N] = dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
-	Phi_ee	[N] = dt*(var_x_ee);
-	Phi_ei	[N] = dt*(var_x_ei);
-	Phi_ie	[N] = dt*(var_x_ie);
-	Phi_ii	[N] = dt*(var_x_ii);
-	x_ee  	[N] = dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) + noise_xRK(N, 0)	- var_Phi_ee) - 2 * gamma_e * var_x_ee);
-	x_ei  	[N] = dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) + noise_xRK(N, 1)	- var_Phi_ei) - 2 * gamma_e * var_x_ei);
-	x_ie  	[N] = dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) 			  		- var_Phi_ie) - 2 * gamma_i * var_x_ie);
-	x_ii  	[N] = dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N)		 	  		- var_Phi_ii) - 2 * gamma_i * var_x_ii);
+    extern const double dt;
+    Ve	[N+1] = Ve  [0] + A[N] * dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
+    Vi	[N+1] = Vi  [0] + A[N] * dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
+    Na	[N+1] = Na  [0] + A[N] * dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
+    y_ee[N+1] = y_ee[0] + A[N] * dt*(x_ee[N]);
+    y_ei[N+1] = y_ei[0] + A[N] * dt*(x_ei[N]);
+    y_ie[N+1] = y_ie[0] + A[N] * dt*(x_ie[N]);
+    y_ii[N+1] = y_ii[0] + A[N] * dt*(x_ii[N]);
+    x_ee[N+1] = x_ee[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) - y_ee[N]) - 2 * gamma_e * x_ee[N]) + noise_xRK(N, 0);
+    x_ei[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) - y_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
+    x_ie[N+1] = x_ie[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) - y_ie[N]) - 2 * gamma_i * x_ie[N]);
+    x_ii[N+1] = x_ii[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N) - y_ii[N]) - 2 * gamma_i * x_ii[N]);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -185,18 +189,17 @@ void Cortical_Column::set_RK (int N) {
 /*									Function that adds all SRK terms								*/
 /****************************************************************************************************/
 void Cortical_Column::add_RK(void) {
-	extern const double h;
-	Ve	  	[0] += (Ve		[1] + Ve	[2] * 2 + Ve	[3] * 2 + Ve	[4])/6;
-	Vi	  	[0] += (Vi		[1] + Vi	[2] * 2 + Vi	[3] * 2 + Vi	[4])/6;
-	Na		[0] += (Na		[1] + Na	[2] * 2 + Na	[3] * 2 + Na	[4])/6;
-	Phi_ee	[0] += (Phi_ee	[1] + Phi_ee[2] * 2 + Phi_ee[3] * 2 + Phi_ee[4])/6;
-	Phi_ei	[0] += (Phi_ei	[1] + Phi_ei[2] * 2 + Phi_ei[3] * 2 + Phi_ei[4])/6;
-	Phi_ie	[0] += (Phi_ie	[1] + Phi_ie[2] * 2 + Phi_ie[3] * 2 + Phi_ie[4])/6;
-	Phi_ii	[0] += (Phi_ii	[1] + Phi_ii[2] * 2 + Phi_ii[3] * 2 + Phi_ii[4])/6;
-	x_ee  	[0] += (x_ee	[1] + x_ee	[2] * 2 + x_ee	[3] * 2 + x_ee	[4])/6 + pow(gamma_e, 2) * h * Rand_vars[0];
-	x_ei  	[0] += (x_ei	[1] + x_ei	[2] * 2 + x_ei	[3] * 2 + x_ei	[4])/6 + pow(gamma_e, 2) * h * Rand_vars[2];
-	x_ie  	[0] += (x_ie	[1] + x_ie	[2] * 2 + x_ie	[3] * 2 + x_ie	[4])/6;
-	x_ii  	[0] += (x_ii	[1] + x_ii	[2] * 2 + x_ii	[3] * 2 + x_ii	[4])/6;
+    Ve	[0] = (-3*Ve  [0] + 2*Ve  [1] + 4*Ve  [2] + 2*Ve  [3] + Ve	[4])/6;
+    Vi	[0] = (-3*Vi  [0] + 2*Vi  [1] + 4*Vi  [2] + 2*Vi  [3] + Vi	[4])/6;
+    Na	[0] = (-3*Na  [0] + 2*Na  [1] + 4*Na  [2] + 2*Na  [3] + Na	[4])/6;
+    y_ee[0] = (-3*y_ee[0] + 2*y_ee[1] + 4*y_ee[2] + 2*y_ee[3] + y_ee[4])/6;
+    y_ei[0] = (-3*y_ei[0] + 2*y_ei[1] + 4*y_ei[2] + 2*y_ei[3] + y_ei[4])/6;
+    y_ie[0] = (-3*y_ie[0] + 2*y_ie[1] + 4*y_ie[2] + 2*y_ie[3] + y_ie[4])/6;
+    y_ii[0] = (-3*y_ii[0] + 2*y_ii[1] + 4*y_ii[2] + 2*y_ii[3] + y_ii[4])/6;
+    x_ee[0] = (-3*x_ee[0] + 2*x_ee[1] + 4*x_ee[2] + 2*x_ee[3] + x_ee[4])/6 + noise_aRK(0);
+    x_ei[0] = (-3*x_ei[0] + 2*x_ei[1] + 4*x_ei[2] + 2*x_ei[3] + x_ei[4])/6 + noise_aRK(1);
+    x_ie[0] = (-3*x_ie[0] + 2*x_ie[1] + 4*x_ie[2] + 2*x_ie[3] + x_ie[4])/6;
+    x_ii[0] = (-3*x_ii[0] + 2*x_ii[1] + 4*x_ii[2] + 2*x_ii[3] + x_ii[4])/6;
 
 	/* Generate noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {
@@ -213,7 +216,7 @@ void Cortical_Column::add_RK(void) {
 /****************************************************************************************************/
 void Cortical_Column::iterate_ODE(void) {
 	/* First calculating every ith RK moment. Has to be in order, 1th moment first  */
-	for (int i=1; i<=4; ++i) {
+    for (int i=0; i<4; ++i) {
 		set_RK(i);
 	}
 	add_RK();

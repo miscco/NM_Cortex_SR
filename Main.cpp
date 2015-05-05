@@ -22,18 +22,17 @@
 
 /****************************************************************************************************/
 /*		Main file for compilation tests																*/
-/*		The Simulation requires the following boost libraries:	Preprocessor						*/
-/*																Random								*/
+/*		The Simulation requires the following boost libraries:	Random								*/
 /****************************************************************************************************/
 #include <iostream>
-#include <ctime>
-
+#include <chrono>
 #include "Cortical_Column.h"
 
 /****************************************************************************************************/
 /*										Fixed simulation settings									*/
 /****************************************************************************************************/
-extern const int T 		= 60;
+typedef std::chrono::high_resolution_clock::time_point timer;
+extern const int T 		= 30;
 extern const int res 	= 1E4;
 extern const double dt 	= 1E3/res;
 extern const double h	= sqrt(dt);
@@ -43,43 +42,27 @@ extern const double h	= sqrt(dt);
 
 
 /****************************************************************************************************/
-/*									Constants for SRK4 integration									*/
-/****************************************************************************************************/
-extern const vector<double> B1 = {0,
-								  0.626708569400000081728308032325,
-								  1.7296310295000001389098542858846,
-		 	 	 	 	 	 	  1.2703689705000000831347506391467};
-extern const vector<double> B2 = {0,
-								  0.78000033203198970710445792065002,
-								  1.28727807507536762265942797967,
-								  0.44477273249350995909523476257164};
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
 /*										Main simulation routine										*/
 /****************************************************************************************************/
 int main(void) {
 	/* Initializing the populations */
-	Cortical_Column Cortex;
+    Cortical_Column Cortex = Cortical_Column();
 
-	/* Take the time of the simulation */
-	time_t start,end;
-	time (&start);
+    /* Take the time of the simulation */
+    timer start,end;
 
-	/* Simulation */
-	for (int t=0; t< T*res; ++t) {
-		Cortex.iterate_ODE();
-	}
+    /* Simulation */
+    start = std::chrono::high_resolution_clock::now();
+    for (int t=0; t< T*res; ++t) {
+        Cortex.iterate_ODE();
+    }
+    end = std::chrono::high_resolution_clock::now();
 
-	time (&end);
-	/* Time consumed by the simulation */
-	double dif = difftime(end,start);
-	std::cout << "simulation done!\n";
-	std::cout << "took " << dif 	<< " seconds" << "\n";
-	std::cout << "end\n";
+    /* Time consumed by the simulation */
+    double dif = 1E-3*std::chrono::duration_cast<std::chrono::milliseconds>( end - start ).count();
+    std::cout << "simulation done!\n";
+    std::cout << "took " << dif 	<< " seconds" << "\n";
+    std::cout << "end\n";
 }
 /****************************************************************************************************/
 /*										 		end			 										*/

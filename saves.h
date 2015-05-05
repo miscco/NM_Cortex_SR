@@ -29,8 +29,13 @@
 /****************************************************************************************************/
 /*											Save data												*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Col, double* Ve) {
+inline void get_data(int counter, Cortical_Column& Col, double* Ve, double* Na, double* S_ee, double* S_ei, double* S_ie, double* S_ii) {
 	Ve 	[counter] = Col.Ve	[0];
+	Na 	[counter] = Col.Vi	[0];
+    S_ee[counter] = Col.y_ee[0];
+    S_ei[counter] = Col.y_ei[0];
+    S_ie[counter] = Col.y_ie[0];
+    S_ii[counter] = Col.y_ii[0];
 }
 /****************************************************************************************************/
 /*										 		end													*/
