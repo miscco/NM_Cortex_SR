@@ -23,7 +23,7 @@
 /****************************************************************************************************/
 /* 		Implementation of the simulation as MATLAB routine (mex compiler)							*/
 /* 		mex command is given by:																	*/
-/* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp						*/
+/* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp							*/
 /*		The Simulation requires the following boost libraries:	Preprocessor						*/
 /*																Random								*/
 /****************************************************************************************************/
@@ -67,20 +67,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	Stim	Stimulation(Cortex, var_stim);
 
 	/* Data container in MATLAB format */
-	mxArray* Ve		= SetMexArray(1, T*res/red);
-	mxArray* Na		= SetMexArray(1, T*res/red);
-	mxArray* S_ee	= SetMexArray(1, T*res/red);
-	mxArray* S_ei	= SetMexArray(1, T*res/red);
-	mxArray* S_ie	= SetMexArray(1, T*res/red);
-	mxArray* S_ii	= SetMexArray(1, T*res/red);
+	vector<mxArray*> Data;
+	Data.push_back(GetMexArray(1, T*res/red));	// Ve
+	Data.push_back(GetMexArray(1, T*res/red));	// Na
+	Data.push_back(GetMexArray(1, T*res/red));	// S_ee
+	Data.push_back(GetMexArray(1, T*res/red));	// S_ei
+	Data.push_back(GetMexArray(1, T*res/red));	// S_ie
+	Data.push_back(GetMexArray(1, T*res/red));	// S_ii
 
-	/* Pointer to the actual data block */
-	double* Pr_Ve	= mxGetPr(Ve);
-	double* Pr_Na	= mxGetPr(Na);
-	double* Pr_S_ee	= mxGetPr(S_ee);
-	double* Pr_S_ei	= mxGetPr(S_ei);
-	double* Pr_S_ie	= mxGetPr(S_ie);
-	double* Pr_S_ii	= mxGetPr(S_ii);
+	/* Pointer to the data blocks */
+	vector<double*> pData(Data.size(), NULL);
+	for(unsigned i=0; i<Data.size(); ++i)
+		pData[i] = mxGetPr(Data[i]);
 
 	/* Simulation */
 	int count = 0;
@@ -88,17 +86,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		Cortex.iterate_ODE();
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-			get_data(count, Cortex, Pr_Ve, Pr_Na, Pr_S_ee, Pr_S_ei, Pr_S_ie, Pr_S_ii);
+			get_data(count, Cortex, pData);
 			++count;
 		}
 	}
 
-	plhs[0] = Ve;
-	plhs[1] = Na;
-	plhs[2] = S_ee;
-	plhs[3] = S_ei;
-	plhs[4] = S_ie;
-	plhs[5] = S_ii;
+	/* Return the data containers */
+	for(unsigned i=0; i<Data.size(); ++i)
+		plhs[i] = Data[i];
 	plhs[6] = Stimulation.get_marker();
 	return;
 }

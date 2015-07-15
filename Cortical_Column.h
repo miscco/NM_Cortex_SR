@@ -90,32 +90,32 @@ public:
 
 	/* Noise function */
 	double 	noise_xRK 	(int, int) const;
-    double 	noise_aRK 	(int) const;
+	double 	noise_aRK 	(int) const;
 
 	/* ODE functions */
 	void 	set_RK		(int);
 	void 	add_RK	 	(void);
 	void	iterate_ODE	(void);
 
-    /* Data storage  access */
-    friend void get_data (int, Cortical_Column&, double*, double*, double*, double*, double*, double*);
+	/* Data storage  access */
+	friend void get_data (int, Cortical_Column&, vector<double*>);
 
 	/* Stimulation protocol access */
 	friend class Stim;
 
 private:
 	/* Population variables */
-	vector<double> 	Ve		= _INIT(E_L_e),		/* excitatory membrane voltage						*/
-					Vi		= _INIT(E_L_i),		/* inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),		/* Na concentration									*/
-                    y_ee	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
-                    y_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
-                    y_ie	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
-                    y_ii	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
-					x_ee	= _INIT(0.0),		/* derivative of Phi_ee								*/
-					x_ei	= _INIT(0.0),		/* derivative of Phi_ei								*/
-					x_ie	= _INIT(0.0),		/* derivative of Phi_ie				 				*/
-					x_ii	= _INIT(0.0);		/* derivative of Phi_ii 							*/
+	vector<double> 	Ve	= _INIT(E_L_e),		/* excitatory membrane voltage						*/
+			Vi	= _INIT(E_L_i),		/* inhibitory membrane voltage						*/
+			Na	= _INIT(Na_eq),		/* Na concentration									*/
+			y_ee	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
+			y_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
+			y_ie	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
+			y_ii	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
+			x_ee	= _INIT(0.0),		/* derivative of Phi_ee								*/
+			x_ei	= _INIT(0.0),		/* derivative of Phi_ei								*/
+			x_ie	= _INIT(0.0),		/* derivative of Phi_ie				 				*/
+			x_ii	= _INIT(0.0);		/* derivative of Phi_ii 							*/
 
 	/* Random number generators */
 	vector<GEN>		MTRands;
@@ -141,14 +141,14 @@ private:
 	const double 	sigma_i		= 6;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1          = (3.14159265/sqrt(3));
+	const double 	C1		= (3.14159265/sqrt(3));
 
 	/* Parameters of the firing adaption */
-    const double 	alpha_Na	= 2.;			/* Sodium influx per spike			in mM ms 	*/
-    const double 	tau_Na		= 1.;			/* Sodium time constant				in ms 		*/
+	const double 	alpha_Na	= 2.;		/* Sodium influx per spike  in mM ms 	*/
+	const double 	tau_Na		= 1.;		/* Sodium time constant	    in ms 	*/
 
-	const double 	R_pump   	= 0.09;        	/* Na-K pump constant				in mM/ms 	*/
-	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration				in mM 		*/
+	const double 	R_pump   	= 0.09;        	/* Na-K pump constant	    in mM/ms 	*/
+	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM 	*/
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
@@ -167,22 +167,22 @@ private:
 	const double 	E_GABA  	= -70;
 
 	/* Leak */
-    const double 	E_L_e 		= -66;
-    const double 	E_L_i 		= -64;
+	const double 	E_L_e 		= -66;
+	const double 	E_L_i 		= -64;
 
 	/* Potassium */
 	const double 	E_K    		= -100;
 
 	/* Noise parameters in ms^-1 */
-    const double 	mphi		= 0.0;
-    const double	dphi		= 20E-1;
-	double			input		= 0.0;
+	const double 	mphi		= 0.0;
+	const double	dphi		= 20E-1;
+	double		input		= 0.0;
 
 	/* Connectivities (dimensionless) */
-    const double 	N_ee		= 120;
-    const double 	N_ei		= 72;
-    const double 	N_ie		= 90;
-    const double 	N_ii		= 90;
+	const double 	N_ee		= 120;
+	const double 	N_ei		= 72;
+	const double 	N_ie		= 90;
+	const double 	N_ii		= 90;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/
