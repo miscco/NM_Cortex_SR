@@ -24,14 +24,13 @@
 /*								Header file of a cortical module								*/
 /************************************************************************************************/
 #pragma once
-#include <iostream>
 #include <cmath>
 #include <vector>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include "Sleep_Regulation.h"
 using std::vector;
+class Cortical_Column;
 
 /****************************************************************************************************/
 /*										Typedefs for RNG											*/
@@ -58,44 +57,27 @@ typedef boost::random::variate_generator<ENG,DIST> 	GEN;    /* Variate generator
 /****************************************************************************************************/
 /*								Implementation of the cortical module 								*/
 /****************************************************************************************************/
-class Cortical_Column {
+class Sleep_Regulation {
 public:
 	/* Constructors */
-	Cortical_Column(void)
-	{set_RNG();}
+	Sleep_Regulation(void)
+	{ C_E = _INIT(tanh(f_W[0]/gamma_E));
+	  C_G = _INIT(tanh(f_N[0]/gamma_G));
+	  C_A = _INIT(tanh(f_R[0]/gamma_A));
+	}
 
-	Cortical_Column(double* Par_SR)
-	:SR(Sleep_Regulation(Par_SR))
-	{set_RNG(); Update_Bifurcation_Parameters(0);}
+	Sleep_Regulation(double* Par)
+	: f_W(_INIT(Par[0])), f_N(_INIT(Par[1])), f_R(_INIT(Par[2])), h(_INIT(Par[3]))
+	{ C_E = _INIT(tanh(f_W[0]/gamma_E));
+	  C_G = _INIT(tanh(f_N[0]/gamma_G));
+	  C_A = _INIT(tanh(f_R[0]/gamma_A));
+	}
 
-	/* Initialize the RNGs */
-	void 	set_RNG		(void);
-
-	/* Set strength of input */
-	void	set_input	(double I) {input = I;}
-
-	/* Firing rates */
-	double 	get_Qe		(int) const;
-	double 	get_Qi		(int) const;
-
-	/* Currents */
-	double 	I_ee		(int) const;
-	double 	I_ei		(int) const;
-	double 	I_ie		(int) const;
-	double 	I_ii		(int) const;
-	double 	I_L_e		(int) const;
-	double 	I_L_i		(int) const;
-	double 	I_KNa		(int) const;
-
-	/* Potassium pump */
-	double 	Na_pump		(int) const;
-
-	/* Bifurcation Parameter update */
-	void	Update_Bifurcation_Parameters (int N);
-
-	/* Noise function */
-	double 	noise_xRK 	(int, int) const;
-	double 	noise_aRK 	(int) const;
+	/* Input functions */
+	double I_W(int) const;
+	double I_N(int) const;
+	double I_R(int) const;
+	double Heaviside(double X);
 
 	/* ODE functions */
 	void 	set_RK		(int);
@@ -105,98 +87,69 @@ public:
 	/* Data storage  access */
 	friend void get_data (int, Cortical_Column&, vector<double*>);
 
-	/* Stimulation protocol access */
-	friend class Stim;
-
 private:
 	/* Population variables */
-	vector<double> 	Ve		= _INIT(E_L_e),	/* excitatory membrane voltage						*/
-					Vi		= _INIT(E_L_i),	/* inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),	/* Na concentration									*/
-					y_ee	= _INIT(0.0),	/* PostSP from excitatory to excitatory population	*/
-					y_ei	= _INIT(0.0),	/* PostSP from excitatory to inhibitory population	*/
-					y_ie	= _INIT(0.0),	/* PostSP from inhibitory to excitatory population	*/
-					y_ii	= _INIT(0.0),	/* PostSP from inhibitory to inhibitory population	*/
-					x_ee	= _INIT(0.0),	/* derivative of Phi_ee								*/
-					x_ei	= _INIT(0.0),	/* derivative of Phi_ei								*/
-					x_ie	= _INIT(0.0),	/* derivative of Phi_ie				 				*/
-					x_ii	= _INIT(0.0);	/* derivative of Phi_ii 							*/
+	vector<double> 	f_W			= _INIT(6.),	/* Wake promoting activity	in [s^-1]	*/
+					f_N			= _INIT(1E-3),	/* Sleep promoting activity	in [s^-1] 	*/
+					f_R			= _INIT(1E-3),	/* REM promoting activity	in [s^-1] 	*/
+					C_E			= _INIT(0.9),	/* Norephrine concentration	in [aU]		*/
+					C_G			= _INIT(1E-3),	/* GABA concentration		in [aU] 	*/
+					C_A			= _INIT(1E-3),	/* Acetylcholin concentration in [aU] 	*/
+					h			= _INIT(0.5);	/* Homeostatic sleep drive	in [aU] 	*/
 
-	/* Random number generators */
-	vector<GEN>		MTRands;
-
-	/* Container for noise */
-	vector<double>	Rand_vars;
 
 	/* Declaration and Initialization of parameters */
-	/* Membrane time in ms */
-	const double 	tau_e 		= 30;
-	const double 	tau_i 		= 30;
+	/* NOTE As most variables are encapsulated into tanh we need to only transform the tau_* to ms */
+	/* Membrane time in [ms] */
+	const int		tau_W 		= 1500E3;
+	const int		tau_N 		= 600E3;
+	const int		tau_R 		= 60E3;
 
-	/* Maximum firing rate in ms^-1 */
-	const double 	Qe_max		= 30.E-3;
-	const double 	Qi_max		= 60.E-3;
+	/* Neurotransmitter time constants in [s] */
+	const int		tau_E 		= 25;
+	const int		tau_G 		= 10;
+	const int		tau_A 		= 10;
 
-	/* Sigmoid threshold in mV */
-	const double 	theta_e		= -58.5;
-	const double 	theta_i		= -58.5;
+	/* Maximum firing rate in [s^-1] */
+	const double 	F_W_max		= 6.5;
+	const double 	F_N_max		= 5.;
+	const double 	F_R_max		= 5.;
 
-	/* Sigmoid gain in mV */
-	const double	sigma_e_0	= 7;
-	double			sigma_e		= sigma_e_0;
-	const double 	sigma_i		= 6;
+	/* Sigmoid slope parameters in [aU] */
+	const double 	alpha_W		= 0.5;
+	const double 	alpha_N		= 0.175;
+	const double 	alpha_R		= 0.13;
 
-	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1		= (3.14159265/sqrt(3));
+	/* Sigmoid threshold parameters in [aU] */
+	const double 	beta_W		= -0.4;
+/*  const double	beta_N		= k * h(t); */
+	const double 	beta_R		= -0.9;
 
-	/* Parameters of the firing adaption */
-	const double 	alpha_Na	= 2.;		/* Sodium influx per spike  in mM ms 	*/
-	const double 	tau_Na		= 1.;		/* Sodium time constant	    in ms 	*/
+	/* Neurotransmitter release scaling in [s^-1] */
+	const double 	gamma_E		= 5;
+	const double	gamma_G		= 5;
+	const double	gamma_A		= 2.5;
 
-	const double 	R_pump   	= 0.09;        	/* Na-K pump constant	    in mM/ms 	*/
-	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM 	*/
+	/* Weights for neurotransmitter efficacy in [aU]*/
+	const double 	g_GW		= -1.68;
+	const double 	g_AW		= 1.;
+	const double 	g_GR		= -1.3;
+	const double 	g_AR		= 1.6;
+	const double 	g_ER		= -4;
+	const double 	g_EN		= -2;
 
-	/* PSP rise time in ms^-1 */
-	const double 	gamma_e		= 70E-3;
-	const double 	gamma_i		= 58.6E-3;
-
-	/* Conductivities in mS/cm^-2 */
-	/* Leak */
-	const double 	g_L    		= 1;
-
-	/* KNa */
-	const double	g_KNa_0		= 1.33;
-	double			g_KNa		= g_KNa_0;
-
-	/* Reversal potentials in mV */
-	/* Synaptic */
-	const double 	E_AMPA  	= 0;
-	const double 	E_GABA  	= -70;
-
-	/* Leak */
-	const double 	E_L_e 		= -66;
-	const double 	E_L_i 		= -64;
-
-	/* Potassium */
-	const double 	E_K    		= -100;
-
-	/* Noise parameters in ms^-1 */
-	const double 	mphi		= 0.0;
-	const double	dphi		= 20E-1;
-	double			input		= 0.0;
-
-	/* Connectivities (dimensionless) */
-	const double 	N_ee		= 120;
-	const double 	N_ei		= 72;
-	const double 	N_ie		= 90;
-	const double 	N_ii		= 90;
+	/* Sleep Homeostasis parameter */
+	const int		H_max		= 1;		/* in [aU] */
+	const double	theta_W		= 2.;		/* in [s] */
+	const int		tau_hw		= 34830E3;	/* 580.5 min in [ms] */
+	const int		tau_hs		= 30600E3;	/* 510 min in [ms] */
+	const double	k			= 1.5;		/* in [aU] */
 
 	/* SRK integration parameters */
-	const vector<double> A		= {0.5, 0.5, 1.0, 1.0};
-	const vector<double> B		= {0.75, 0.75, 0.0, 0.0};
+	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
+	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
 
-	/* Sleep regulation module */
-	Sleep_Regulation	SR;
+	friend class Cortical_Column;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

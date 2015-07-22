@@ -1,69 +1,87 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_SR.cpp Cortical_Column.cpp
 
-function Plots(T)
+function Plots(type)
+H = 1;
+T = H*3600;
+Param_SR = [5.36, 0.001, 0.001, 0.5];
 
-if nargin == 0
-    Input_N3    = [ 6.2;        % sigma_e
-                    2;          % g_KNa
-                 %2;         % alpha_Na
-                 %1;         % tau_Na
-                    20E-1];	% dphi
-                        
-                        
-    Input_N2    = [ 4.6;        % sigma_e
-                    1.33;       % g_KNa
-                 %2;         % alpha_Na
-                 %1;         % tau_Na
-                    20E-1];	% dphi
-                     
-    % stimulation parameters
-    % first number is the mode of stimulation
-    % 0 == none
-    % 1 == semi-periodic
-    % 2 == phase dependend
-    
-    var_stim    = [ 0;           % mode of stimulation
-                    0;          % strength of the stimulus              in Hz (spikes per second)
-                    0;       	% duration of the stimulus              in ms
-                    0;          % time between stimulation events       in s  (ISI)
-                    0;          % range of ISI                          in s  [ISI-range,ISI+range]  
-                    0;          % Number of stimuli per event
-                    0;          % time between stimuli within a event   in ms         
-                    0];         % time until stimuli after minimum      in ms
-                
-    T           =   30;         % duration of the simulation
-end
-[Ve_N2, Na_N2, ~]    = Cortex(T, Input_N2, var_stim);
-[Ve_N3, Na_N3, ~]    = Cortex(T, Input_N3, var_stim);
-
-% load the data the model should be fit to
-
-load('Data/EEG_Data_N2');
-load('Data/EEG_Data_N3');
+mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex.cpp Cortical_Column.cpp Sleep_Regulation.cpp
+tic 
+[Ve, Na, f_W, f_N, f_R, C_E, C_G, C_A, h, g_KNa, sigma_e]  = Cortex(T, Param_SR); 
+toc
 
 % plottig the result with an random T second snipplet from the Data
-time = linspace(0,T,T*100);
+time = linspace(0,H,length(Ve));
 
-% figure(1)
-% subplot(211)
-% plot(time,zscore(Ve_N3)')
-% title('Model in N3'),  xlabel('time in s'), ylabel('V_{e} in \muV')
-% %ylim([-5,5]);
-% subplot(212)
-% plot(time,Data_N3)
-% title('EEG trace of N3'),  xlabel('time in s'), ylabel('V_{e} in \muV')
-% %ylim([-5,5]);
+% Get the hypnogram
+Hypnogram= ones(length(f_W),1);
+Hypnogram(C_E<0.4) = 0.5;
+Hypnogram(C_A>0.4) = 0; 
+
+figure(4)
+subplot(211)
+plot(time, g_KNa)
+set(gca, 'xtick', 0:4:24);
+xlabel('Time [h]');
+ylabel('g_{KNa}');
+subplot(212)
+plot(time, sigma_e)
+set(gca, 'xtick', 0:4:24);
+xlabel('Time [h]');
+ylabel('sigma_{e}');
+
+figure(3)
+subplot(211)
+plot(time, f_W, 'g', time, f_N, 'r', time, f_R, 'b', time, h, 'y')
+set(gca, 'xtick', 0:4:24);
+xlabel('Time [h]');
+ylabel('Activity [Hz]');
+legend('F_W', 'F_N', 'F_R', 'h') 
+subplot(212)
+plot(time, Hypnogram, 'black');
+ylim([-0.5, 1.5])
+set(gca, 'box', 'off', 'xtick', 0:240:1440, 'ytick', [0, 0.5, 1], 'yticklabel', {'REM', 'NREM', 'Wake'})
 
 figure(2)
-subplot(211)
-plot(time,(Ve_N2)')
-title('Model in N2'),  xlabel('time in s'), ylabel('V_{e} in \muV')
-subplot(212)
-% plot(time,Data_N2)
-% ylim([-8,8]);
-% title('EEG trace of N2'),  xlabel('time in s'), ylabel('V_{e} in \muV')
+plot3(time, g_KNa, sigma_e);
+set(gca, 'xtick', 0:4:24);
+xlabel('Time [h]')
+ylabel('g_{KNa}')
+zlabel('\sigma_e')
 
-plot(Ve_N2, Na_N2)
-xlabel('V_{e}')
-ylabel('Na')
+% load the data from xppaut
+fname_Hopf = '/nfshome/schellen/Documents/MATLAB/Papers/C_model/Data/Hopf-diagram.dat';
+fname_Fold = '/nfshome/schellen/Documents/MATLAB/Papers/C_model/Data/Saddle-diagram.dat';
+
+% Path to matlab2tikz
+if(isempty(strfind(path, '/nfshome/schellen/Documents/MATLAB/Tools/PlotXPP')))
+    addpath(genpath('/nfshome/schellen/Documents/MATLAB/Tools/PlotXPP'));
+end
+
+% create the figure
+figure(1)
+clf, shg
+
+% plot the data
+plotxppaut(fname_Hopf,'Red','-')
+plotxppaut(fname_Fold,'Black','-')
+xlim([0,8.2])
+ylim([0.1,10.5])
+
+% add the vertical lines
+plot([0,8],[6.195,6.195],'--','Color',[0.7,0.7,0.7],'LineWidth',0.5)
+plot([0,8],[3.617,3.617],'--','Color',[0.7,0.7,0.7],'LineWidth',0.5)
+
+% label the axes
+ylabel('\sigma_{e} [mV]')
+xlabel('g_{KNa} [mS/cm^2]')
+
+% set the ticks for the axes
+set(gca,'YTick',[2 4 6 8 10])
+set(gca,'XTick',[0 2 4 6 8])
+
+plot(g_KNa, sigma_e);
+xlabel('g_{KNa}')
+ylabel('\sigma_e')
+end

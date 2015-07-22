@@ -30,12 +30,18 @@
 /*											Save data												*/
 /****************************************************************************************************/
 inline void get_data(int counter, Cortical_Column& Col, vector<double*> pData) {
-    pData[0][counter] = Col.Ve	[0];
-    pData[1][counter] = Col.Vi	[0];
-    pData[2][counter] = Col.y_ee[0];
-    pData[3][counter] = Col.y_ei[0];
-    pData[4][counter] = Col.y_ie[0];
-    pData[5][counter] = Col.y_ii[0];
+	pData[0][counter] = Col.Ve		[0];
+	pData[1][counter] = Col.Vi		[0];
+	pData[2][counter] = Col.SR.f_W	[0];
+	pData[3][counter] = Col.SR.f_N	[0];
+	pData[4][counter] = Col.SR.f_R	[0];
+	pData[5][counter] = Col.SR.C_E	[0];
+	pData[6][counter] = Col.SR.C_G	[0];
+	pData[7][counter] = Col.SR.C_A	[0];
+	pData[8][counter] = Col.SR.h	[0];
+	pData[9][counter] = Col.g_KNa;
+	pData[10][counter]= Col.sigma_e;
+
 }
 /****************************************************************************************************/
 /*										 		end													*/
@@ -47,10 +53,11 @@ inline void get_data(int counter, Cortical_Column& Col, vector<double*> pData) {
 /****************************************************************************************************/
 mxArray* SetMexArray(int N, int M) {
 	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
-    mxSetM(Array, N);
-    mxSetN(Array, M);
-    mxSetData(Array, mxMalloc(sizeof(double)*M*N));
-    return Array;
+	mxSetM(Array, N);
+	mxSetN(Array, M);
+	#pragma omp critical
+	{mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
+	return Array;
 }
 /****************************************************************************************************/
 /*										 		end													*/
