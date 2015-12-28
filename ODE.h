@@ -27,28 +27,25 @@
  */
 
 /****************************************************************************************************/
-/*									Functions for data storage										*/
+/*									Implementation of the ODE solver								*/
 /****************************************************************************************************/
 #pragma once
-#include "Cortical_Column.h"
 #include "Sleep_Regulation.h"
+#include "Cortical_Column.h"
 
 /****************************************************************************************************/
-/*											Save data												*/
+/*										Evaluation of SRK4											*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, vector<double*> pData) {
-	pData[0][counter] = Col.Ve		[0];
-	pData[1][counter] = Col.Vi		[0];
-	pData[2][counter] = SR.f_W		[0];
-	pData[3][counter] = SR.f_N		[0];
-	pData[4][counter] = SR.f_R		[0];
-	pData[5][counter] = SR.C_E		[0];
-	pData[6][counter] = SR.C_G		[0];
-	pData[7][counter] = SR.C_A		[0];
-	pData[8][counter] = SR.h		[0];
-	pData[9][counter] = Col.g_KNa	[0];
-	pData[10][counter]= Col.sigma_e	[0];
+inline void ODE(Cortical_Column& Cortex, Sleep_Regulation& SR) {
+	/* First calculate every ith RK moment. Has to be in order, 1th moment first */
+	for (int i=0; i<4; ++i) {
+		SR.set_RK(i);
+		Cortex.set_RK(i);
+	}
 
+	/* Add all moments */
+	SR.add_RK();
+	Cortex.add_RK();
 }
 /****************************************************************************************************/
 /*										 		end													*/

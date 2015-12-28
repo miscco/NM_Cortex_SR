@@ -1,24 +1,30 @@
 /*
-*	Copyright (c) 2014 Michael Schellenberger Costa
-*
-*	Permission is hereby granted, free of charge, to any person obtaining a copy
-*	of this software and associated documentation files (the "Software"), to deal
-*	in the Software without restriction, including without limitation the rights
-*	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-*	copies of the Software, and to permit persons to whom the Software is
-*	furnished to do so, subject to the following conditions:
-*
-*	The above copyright notice and this permission notice shall be included in
-*	all copies or substantial portions of the Software.
-*
-*	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-*	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-*	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-*	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-*	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-*	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-*	THE SOFTWARE.
-*/
+ *	Copyright (c) 2015 University of Lübeck
+ *
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *
+ *	The above copyright notice and this permission notice shall be included in
+ *	all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *	THE SOFTWARE.
+ *
+ *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
+ *
+ *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
+ *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
+ *				Journal of Computational Neuroscience (in review)
+ */
 
 /****************************************************************************************************/
 /*									Functions of the cortical module								*/
@@ -71,7 +77,7 @@ double Cortical_Column::noise_aRK(int M) const{
 /****************************************************************************************************/
 /* Pyramidal firing rate */
 double Cortical_Column::get_Qe	(int N) const{
-	double q = Qe_max / (1 + exp(-C1 * (Ve[N] - theta_e) / sigma_e));
+	double q = Qe_max / (1 + exp(-C1 * (Ve[N] - theta_e) / sigma_e[N]));
 	return q;
 }
 
@@ -90,24 +96,24 @@ double Cortical_Column::get_Qi	(int N) const{
 /****************************************************************************************************/
 /* Excitatory input to pyramidal population */
 double Cortical_Column::I_ee	(int N) const{
-	double I = y_ee[N] * (Ve[N] - E_AMPA);
+	double I = g_AMPA * y_ee[N] * (Ve[N] - E_AMPA);
 	return I;
 }
 
 /* Inhibitory input to pyramidal population */
 double Cortical_Column::I_ie	(int N) const{
-	double I = y_ie[N] * (Ve[N] - E_GABA);
+	double I = g_GABA * y_ie[N] * (Ve[N] - E_GABA);
 	return I;
 }
 /* Excitatory input to inhibitory population */
 double Cortical_Column::I_ei	(int N) const{
-	double I = y_ei[N] * (Vi[N] - E_AMPA);
+	double I = g_AMPA * y_ei[N] * (Vi[N] - E_AMPA);
 	return I;
 }
 
 /* Inhibitory input to inhibitory population */
 double Cortical_Column::I_ii	(int N) const{
-	double I = y_ii[N] * (Vi[N] - E_GABA);
+	double I = g_GABA * y_ii[N] * (Vi[N] - E_GABA);
 	return I;
 }
 /****************************************************************************************************/
@@ -133,7 +139,7 @@ double Cortical_Column::I_L_i	(int N) const{
 /* Sodium dependent potassium current */
 double Cortical_Column::I_KNa		(int N)  const{
 	double w_KNa  = 0.37/(1+pow(38.7/Na[N], 3.5));
-	double I_KNa  = g_KNa * w_KNa * (Ve[N] - E_K);
+	double I_KNa  = g_KNa[N] * w_KNa * (Ve[N] - E_K);
 	return I_KNa;
 }
 /****************************************************************************************************/
@@ -156,9 +162,9 @@ double Cortical_Column::Na_pump		(int N) const{
 /****************************************************************************************************/
 /*									 Bifurcation parameters update									*/
 /****************************************************************************************************/
-void Cortical_Column::Update_Bifurcation_Parameters	(int N) {
-	g_KNa   = g_KNa_0   * (0.67 * SR.C_G[N]  * (3 - SR.C_E[N] - 2*SR.C_A[N]));
-	sigma_e = sigma_e_0 - (4 * SR.C_E[N] + 2 * SR.C_A[N]);
+void Cortical_Column::Update_Bifurcation_Parameters	(void) {
+	g_KNa  [0] = g_KNa_0   * (2./3. * SR->C_G[0]  * (3 - 2*(SR->C_E[0] + SR->C_A[0])));
+	sigma_e[0] = sigma_e_0 - (4 * SR->C_E[0] + 2 * SR->C_A[0]);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -170,21 +176,19 @@ void Cortical_Column::Update_Bifurcation_Parameters	(int N) {
 /****************************************************************************************************/
 void Cortical_Column::set_RK (int N) {
 	extern const double dt;
-	Ve	[N+1] = Ve  [0] + A[N] * dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
-	Vi	[N+1] = Vi  [0] + A[N] * dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
-	Na	[N+1] = Na  [0] + A[N] * dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
-	y_ee[N+1] = y_ee[0] + A[N] * dt*(x_ee[N]);
-	y_ei[N+1] = y_ei[0] + A[N] * dt*(x_ei[N]);
-	y_ie[N+1] = y_ie[0] + A[N] * dt*(x_ie[N]);
-	y_ii[N+1] = y_ii[0] + A[N] * dt*(x_ii[N]);
-	x_ee[N+1] = x_ee[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) - y_ee[N]) - 2 * gamma_e * x_ee[N]) + noise_xRK(N, 0);
-	x_ei[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) - y_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
-	x_ie[N+1] = x_ie[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) - y_ie[N]) - 2 * gamma_i * x_ie[N]);
-	x_ii[N+1] = x_ii[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N) - y_ii[N]) - 2 * gamma_i * x_ii[N]);
-
-	/* Update the sleep_regulatory input */
-	SR.set_RK(N);
-	Update_Bifurcation_Parameters(N+1);
+	Ve		[N+1] = Ve  [0] + A[N] * dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
+	Vi		[N+1] = Vi  [0] + A[N] * dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
+	Na		[N+1] = Na  [0] + A[N] * dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
+	y_ee	[N+1] = y_ee[0] + A[N] * dt*(x_ee[N]);
+	y_ei	[N+1] = y_ei[0] + A[N] * dt*(x_ei[N]);
+	y_ie	[N+1] = y_ie[0] + A[N] * dt*(x_ie[N]);
+	y_ii	[N+1] = y_ii[0] + A[N] * dt*(x_ii[N]);
+	x_ee	[N+1] = x_ee[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) - y_ee[N]) - 2 * gamma_e * x_ee[N]) + noise_xRK(N, 0);
+	x_ei	[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) - y_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
+	x_ie	[N+1] = x_ie[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) - y_ie[N]) - 2 * gamma_i * x_ie[N]);
+	x_ii	[N+1] = x_ii[0] + A[N] * dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N) - y_ii[N]) - 2 * gamma_i * x_ii[N]);
+	g_KNa	[N+1] = g_KNa[0]+ A[N] * dt*(g_KNa_0 * (0.66 * SR->C_G[N] * (3 - 1.6*SR->C_E[N] - 2 * SR->C_A[N])) - g_KNa[N])/tau_g;
+	sigma_e [N+1] = sigma_e[0]+A[N]* dt*(sigma_e_0 - (4 * SR->C_E[N] + 2 * SR->C_A[N]) - sigma_e[N])/tau_s;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -206,10 +210,8 @@ void Cortical_Column::add_RK(void) {
 	x_ei[0] = (-3*x_ei[0] + 2*x_ei[1] + 4*x_ei[2] + 2*x_ei[3] + x_ei[4])/6 + noise_aRK(1);
 	x_ie[0] = (-3*x_ie[0] + 2*x_ie[1] + 4*x_ie[2] + 2*x_ie[3] + x_ie[4])/6;
 	x_ii[0] = (-3*x_ii[0] + 2*x_ii[1] + 4*x_ii[2] + 2*x_ii[3] + x_ii[4])/6;
-
-	/* Update sleep regulation */
-	SR.add_RK();
-	Update_Bifurcation_Parameters(0);
+	g_KNa[0]= (-3*g_KNa[0]+ 2*g_KNa[1]+ 4*g_KNa[2]+ 2*g_KNa[3]+ g_KNa[4])/6;
+	sigma_e[0]=(-3*sigma_e[0]+2*sigma_e[1] + 4*sigma_e[2] + 2*sigma_e[3] + sigma_e[4])/6;
 
 	/* Generate noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {
@@ -218,19 +220,4 @@ void Cortical_Column::add_RK(void) {
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*										Evaluation of SRK4											*/
-/****************************************************************************************************/
-void Cortical_Column::iterate_ODE(void) {
-	/* First calculating every ith RK moment. Has to be in order, 1th moment first  */
-	for (int i=0; i<4; ++i) {
-		set_RK(i);
-	}
-	add_RK();
-}
-/****************************************************************************************************/
-/*										 		end													*/
 /****************************************************************************************************/

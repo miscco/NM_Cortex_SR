@@ -1,17 +1,23 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_SR.cpp Cortical_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp
+% Sleep_Regulation.cpp
 
 function Plots(type)
-H = 1;
+H = 4; % ~ 2 min per H on Cor i7
 T = H*3600;
-Param_SR = [5.36, 0.001, 0.001, 0.5];
+
+Param_SR = [1.2375;     % f_W 
+            4.858;      % f_N
+            0.001;      % f_R
+            0.8781];    % h
 
 mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex.cpp Cortical_Column.cpp Sleep_Regulation.cpp
+
 tic 
 [Ve, Na, f_W, f_N, f_R, C_E, C_G, C_A, h, g_KNa, sigma_e]  = Cortex(T, Param_SR); 
 toc
 
-% plottig the result with an random T second snipplet from the Data
+% time axis
 time = linspace(0,H,length(Ve));
 
 % Get the hypnogram
@@ -20,32 +26,37 @@ Hypnogram(C_E<0.4) = 0.5;
 Hypnogram(C_A>0.4) = 0; 
 
 figure(4)
-subplot(211)
+subplot(311)
 plot(time, g_KNa)
-set(gca, 'xtick', 0:4:24);
+set(gca, 'xtick', 0:H/5:H);
 xlabel('Time [h]');
 ylabel('g_{KNa}');
-subplot(212)
+subplot(312)
 plot(time, sigma_e)
-set(gca, 'xtick', 0:4:24);
+set(gca, 'xtick', 0:H/5:H);
 xlabel('Time [h]');
 ylabel('sigma_{e}');
+subplot(313)
+plot(time, Ve)
+set(gca, 'xtick', 0:H/5:H);
+xlabel('Time [h]');
+ylabel('V_{e}');
 
 figure(3)
 subplot(211)
 plot(time, f_W, 'g', time, f_N, 'r', time, f_R, 'b', time, h, 'y')
-set(gca, 'xtick', 0:4:24);
+set(gca, 'xtick', 0:H/5:H);
 xlabel('Time [h]');
 ylabel('Activity [Hz]');
 legend('F_W', 'F_N', 'F_R', 'h') 
 subplot(212)
 plot(time, Hypnogram, 'black');
 ylim([-0.5, 1.5])
-set(gca, 'box', 'off', 'xtick', 0:240:1440, 'ytick', [0, 0.5, 1], 'yticklabel', {'REM', 'NREM', 'Wake'})
+set(gca, 'box', 'off', 'xtick', 0:H/5:H, 'ytick', [0, 0.5, 1], 'yticklabel', {'REM', 'NREM', 'Wake'})
 
 figure(2)
 plot3(time, g_KNa, sigma_e);
-set(gca, 'xtick', 0:4:24);
+set(gca, 'xtick', 0:H/5:H);
 xlabel('Time [h]')
 ylabel('g_{KNa}')
 zlabel('\sigma_e')

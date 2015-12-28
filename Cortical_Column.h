@@ -1,24 +1,30 @@
 /*
-*	Copyright (c) 2014 Michael Schellenberger Costa
-*
-*	Permission is hereby granted, free of charge, to any person obtaining a copy
-*	of this software and associated documentation files (the "Software"), to deal
-*	in the Software without restriction, including without limitation the rights
-*	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-*	copies of the Software, and to permit persons to whom the Software is
-*	furnished to do so, subject to the following conditions:
-*
-*	The above copyright notice and this permission notice shall be included in
-*	all copies or substantial portions of the Software.
-*
-*	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-*	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-*	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-*	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-*	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-*	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-*	THE SOFTWARE.
-*/
+ *	Copyright (c) 2015 University of Lübeck
+ *
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *
+ *	The above copyright notice and this permission notice shall be included in
+ *	all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *	THE SOFTWARE.
+ *
+ *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
+ *
+ *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
+ *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
+ *				Journal of Computational Neuroscience (in review)
+ */
 
 /************************************************************************************************/
 /*								Header file of a cortical module								*/
@@ -64,15 +70,14 @@ public:
 	Cortical_Column(void)
 	{set_RNG();}
 
-	Cortical_Column(double* Par_SR)
-	:SR(Sleep_Regulation(Par_SR))
-	{set_RNG(); Update_Bifurcation_Parameters(0);}
-
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
 
 	/* Set strength of input */
 	void	set_input	(double I) {input = I;}
+
+	/* Connect cortex to the sleep regulatory network */
+	void	connect_SR (Sleep_Regulation& SR_Network) {SR = &SR_Network;}
 
 	/* Firing rates */
 	double 	get_Qe		(int) const;
@@ -91,7 +96,7 @@ public:
 	double 	Na_pump		(int) const;
 
 	/* Bifurcation Parameter update */
-	void	Update_Bifurcation_Parameters (int N);
+	void	Update_Bifurcation_Parameters (void);
 
 	/* Noise function */
 	double 	noise_xRK 	(int, int) const;
@@ -100,28 +105,11 @@ public:
 	/* ODE functions */
 	void 	set_RK		(int);
 	void 	add_RK	 	(void);
-	void	iterate_ODE	(void);
 
 	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, vector<double*>);
-
-	/* Stimulation protocol access */
-	friend class Stim;
+	friend void get_data (int, Cortical_Column&, Sleep_Regulation&, vector<double*>);
 
 private:
-	/* Population variables */
-	vector<double> 	Ve		= _INIT(E_L_e),	/* excitatory membrane voltage						*/
-					Vi		= _INIT(E_L_i),	/* inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),	/* Na concentration									*/
-					y_ee	= _INIT(0.0),	/* PostSP from excitatory to excitatory population	*/
-					y_ei	= _INIT(0.0),	/* PostSP from excitatory to inhibitory population	*/
-					y_ie	= _INIT(0.0),	/* PostSP from inhibitory to excitatory population	*/
-					y_ii	= _INIT(0.0),	/* PostSP from inhibitory to inhibitory population	*/
-					x_ee	= _INIT(0.0),	/* derivative of Phi_ee								*/
-					x_ei	= _INIT(0.0),	/* derivative of Phi_ei								*/
-					x_ie	= _INIT(0.0),	/* derivative of Phi_ie				 				*/
-					x_ii	= _INIT(0.0);	/* derivative of Phi_ii 							*/
-
 	/* Random number generators */
 	vector<GEN>		MTRands;
 
@@ -143,7 +131,7 @@ private:
 
 	/* Sigmoid gain in mV */
 	const double	sigma_e_0	= 7;
-	double			sigma_e		= sigma_e_0;
+	const int		tau_s		= 100;
 	const double 	sigma_i		= 6;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
@@ -160,13 +148,15 @@ private:
 	const double 	gamma_e		= 70E-3;
 	const double 	gamma_i		= 58.6E-3;
 
-	/* Conductivities in mS/cm^-2 */
+	/* Conductivities in aU */
 	/* Leak */
 	const double 	g_L    		= 1;
+	const double 	g_AMPA 		= 1;
+	const double 	g_GABA 		= 1;
 
 	/* KNa */
 	const double	g_KNa_0		= 1.33;
-	double			g_KNa		= g_KNa_0;
+	const int		tau_g		= 10;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -195,8 +185,23 @@ private:
 	const vector<double> A		= {0.5, 0.5, 1.0, 1.0};
 	const vector<double> B		= {0.75, 0.75, 0.0, 0.0};
 
-	/* Sleep regulation module */
-	Sleep_Regulation	SR;
+	/* Pointer to sleep regulatory network */
+	Sleep_Regulation* SR		= NULL;
+
+	/* Population variables */
+	vector<double> 	Ve		= _INIT(E_L_e),	/* Excitatory membrane voltage						*/
+					Vi		= _INIT(E_L_i),	/* Inhibitory membrane voltage						*/
+					Na		= _INIT(Na_eq),	/* Na concentration									*/
+					y_ee	= _INIT(0.0),	/* PostSP from excitatory to excitatory population	*/
+					y_ei	= _INIT(0.0),	/* PostSP from excitatory to inhibitory population	*/
+					y_ie	= _INIT(0.0),	/* PostSP from inhibitory to excitatory population	*/
+					y_ii	= _INIT(0.0),	/* PostSP from inhibitory to inhibitory population	*/
+					x_ee	= _INIT(0.0),	/* derivative of y_ee								*/
+					x_ei	= _INIT(0.0),	/* derivative of y_ei								*/
+					x_ie	= _INIT(0.0),	/* derivative of y_ie				 				*/
+					x_ii	= _INIT(0.0),	/* derivative of y_ii								*/
+					g_KNa	= _INIT(g_KNa_0),	/* Adaptation strength			 				*/
+					sigma_e	= _INIT(sigma_e_0);	/* Inverse neural gain 							*/
 };
 /****************************************************************************************************/
 /*										 		end			 										*/
