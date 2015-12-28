@@ -20,61 +20,62 @@
  *	THE SOFTWARE.
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
+ *              Stefanie Gareis: gareis@inb.uni-luebeck.de
  *
- *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
- *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
- *				Journal of Computational Neuroscience (in review)
  */
 
 /****************************************************************************************************/
-/*		Main file for compilation and runtime tests													*/
-/*		The Simulation requires the following boost libraries:	Random								*/
+/*                                       Random number streams                                      */
 /****************************************************************************************************/
-#include <iostream>
-#include <chrono>
-#include "ODE.h"
-#include "Cortical_Column.h"
+#pragma once
+#include <random>
 
 /****************************************************************************************************/
-/*										Fixed simulation settings									*/
+/*									Struct for normal distribution                                  */
 /****************************************************************************************************/
-typedef std::chrono::high_resolution_clock::time_point timer;
-extern const int T 		= 30;
-extern const int res 	= 1E4;
-extern const double dt 	= 1E3/res;
-extern const double h	= sqrt(dt);
+struct random_stream_normal
+{   
+    /* Random number engine: Mersenne-Twister */
+    std::mt19937_64                     mt;
+    /* Random number generator: Normal-distribution */
+    std::normal_distribution<double>    norm_dist;
+
+    /* Constructors */
+    random_stream_normal(){}
+    random_stream_normal(double mean, double stddev)
+    : mt(rand()) , norm_dist(mean, stddev)
+    {}
+
+    /* Overwrites the function-call operator "( )" */
+    double operator( )(void) {
+        return norm_dist(mt);
+    }
+};
 /****************************************************************************************************/
-/*										 		end			 										*/
+/*										 		end													*/
 /****************************************************************************************************/
 
-
 /****************************************************************************************************/
-/*										Main simulation routine										*/
+/*									Struct for uniform int distribution                             */
 /****************************************************************************************************/
-int main(void) {
-	/* Initializing the populations */
-	Cortical_Column Cortex = Cortical_Column();
-	Sleep_Regulation SR = Sleep_Regulation();
+struct random_stream_uniform_int
+{
+    /* Random number engine: Mersenne-Twister */
+    std::mt19937_64                     mt;
+    /* Random number generator: Uniform integer-distribution */
+    std::uniform_int_distribution<>     uniform_dist;
 
-	/* Connect cortex with sleep regulatory network */
-	Cortex.connect_SR(SR);
+    /* Constructors */
+    random_stream_uniform_int(){}
+    random_stream_uniform_int(double lower_bound, double upper_bound)
+    : mt(rand()) , uniform_dist(lower_bound, upper_bound)
+    {}
 
-	/* Take the time of the simulation */
-	timer start,end;
-
-	/* Simulation */
-	start = std::chrono::high_resolution_clock::now();
-	for (int t=0; t< T*res; ++t) {
-		ODE(Cortex, SR);
-	}
-	end = std::chrono::high_resolution_clock::now();
-
-	/* Time consumed by the simulation */
-	double dif = 1E-3*std::chrono::duration_cast<std::chrono::milliseconds>( end - start ).count();
-	std::cout << "simulation done!\n";
-	std::cout << "took " << dif 	<< " seconds" << "\n";
-	std::cout << "end\n";
-}
+    /* Overwrites the function-call operator "( )" */
+    double operator( )(void) {
+        return uniform_dist(mt);
+    }
+};
 /****************************************************************************************************/
-/*										 		end			 										*/
+/*										 		end													*/
 /****************************************************************************************************/

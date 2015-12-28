@@ -42,10 +42,10 @@ void Cortical_Column::set_RNG(void) {
 	/* Create RNG for each stream */
 	for (int i=0; i<N; ++i){
 	/* Add the RNG for I_{l}*/
-	MTRands.push_back({ENG(rand()), DIST (0.0, dphi*dt)});
+    MTRands.push_back(random_stream_normal(0.0, dphi*dt));
 
 	/* Add the RNG for I_{l,0} */
-	MTRands.push_back({ENG(rand()), DIST (0.0, dt)});
+    MTRands.push_back(random_stream_normal(0.0, dt));
 
 	/* Get the random number for the first iteration */
 	Rand_vars.push_back(MTRands[2*i]());
@@ -151,7 +151,7 @@ double Cortical_Column::I_KNa		(int N)  const{
 /*									 		Potassium pump	 										*/
 /****************************************************************************************************/
 double Cortical_Column::Na_pump		(int N) const{
-	double Na_pump = R_pump*(pow(Na[N], 3)/(pow(Na[N], 3)+3375) -pow(Na_eq, 3)/(pow(Na_eq, 3)+3375));
+    double Na_pump = R_pump*(Na[N]*Na[N]*Na[N]/(Na[N]*Na[N]*Na[N]+3375)-Na_eq*Na_eq*Na_eq/(Na_eq*Na_eq*Na_eq+3375));
 	return Na_pump;
 }
 /****************************************************************************************************/

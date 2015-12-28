@@ -30,25 +30,11 @@
 /*								Header file of a cortical module								*/
 /************************************************************************************************/
 #pragma once
-#include <iostream>
 #include <cmath>
 #include <vector>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include "Random_Stream.h"
 #include "Sleep_Regulation.h"
 using std::vector;
-
-/****************************************************************************************************/
-/*										Typedefs for RNG											*/
-/****************************************************************************************************/
-typedef boost::random::mt11213b                    	ENG;    /* Mersenne Twister		*/
-typedef boost::random::normal_distribution<double>	DIST;   /* Normal Distribution	*/
-typedef boost::random::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
 
 /****************************************************************************************************/
 /*									Macro for vector initialization									*/
@@ -111,7 +97,7 @@ public:
 
 private:
 	/* Random number generators */
-	vector<GEN>		MTRands;
+    vector<random_stream_normal> MTRands;
 
 	/* Container for noise */
 	vector<double>	Rand_vars;

@@ -30,13 +30,11 @@
 /* 		Implementation of the simulation as MATLAB routine (mex compiler)							*/
 /* 		mex command is given by:																	*/
 /* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_mex.cpp Cortical_Column.cpp Sleep_Regulation.cpp*/
-/*		The Simulation requires the following boost libraries:	Random								*/
 /****************************************************************************************************/
 #include "mex.h"
 #include "matrix.h"
+#include "Data_Storage.h"
 #include "ODE.h"
-#include "Cortical_Column.h"
-#include "saves.h"
 mxArray* SetMexArray(int N, int M);
 
 /****************************************************************************************************/

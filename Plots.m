@@ -1,9 +1,9 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex.cpp Cortical_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_SR_mex.cpp Cortical_Column.cpp
 % Sleep_Regulation.cpp
 
 function Plots(type)
-H = 4; % ~ 2 min per H on Cor i7
+H = 4; % ~ 2 min per H on Core i7
 T = H*3600;
 
 Param_SR = [1.2375;     % f_W 
@@ -11,10 +11,10 @@ Param_SR = [1.2375;     % f_W
             0.001;      % f_R
             0.8781];    % h
 
-mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex.cpp Cortical_Column.cpp Sleep_Regulation.cpp
+mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex_SR_mex.cpp Cortical_Column.cpp Sleep_Regulation.cpp
 
 tic 
-[Ve, Na, f_W, f_N, f_R, C_E, C_G, C_A, h, g_KNa, sigma_e]  = Cortex(T, Param_SR); 
+[Ve, Na, f_W, f_N, f_R, C_E, C_G, C_A, h, g_KNa, sigma_e]  = Cortex_SR_mex(T, Param_SR); 
 toc
 
 % time axis

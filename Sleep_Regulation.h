@@ -32,22 +32,8 @@
 #pragma once
 #include <cmath>
 #include <vector>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 using std::vector;
 class Cortical_Column;
-
-/****************************************************************************************************/
-/*										Typedefs for RNG											*/
-/****************************************************************************************************/
-typedef boost::random::mt11213b                    	ENG;    /* Mersenne Twister		*/
-typedef boost::random::normal_distribution<double>	DIST;   /* Normal Distribution	*/
-typedef boost::random::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
 
 /****************************************************************************************************/
 /*									Macro for vector initialization									*/
