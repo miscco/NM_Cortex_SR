@@ -20,10 +20,6 @@
  *	THE SOFTWARE.
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
- *
- *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
- *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
- *				Journal of Computational Neuroscience (in review)
  */
 
 /****************************************************************************************************/

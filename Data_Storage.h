@@ -20,10 +20,6 @@
  *	THE SOFTWARE.
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
- *
- *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
- *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
- *				Journal of Computational Neuroscience (in review)
  */
 
 /****************************************************************************************************/
@@ -37,7 +33,7 @@
 /*											Save data												*/
 /****************************************************************************************************/
 inline void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, vector<double*> pData) {
-	pData[0][counter] = Col.Ve		[0];
+    pData[0][counter] = Col.Vp		[0];
 	pData[1][counter] = Col.Vi		[0];
 	pData[2][counter] = SR.f_W		[0];
 	pData[3][counter] = SR.f_N		[0];
@@ -47,7 +43,7 @@ inline void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, ve
 	pData[7][counter] = SR.C_A		[0];
 	pData[8][counter] = SR.h		[0];
 	pData[9][counter] = Col.g_KNa	[0];
-	pData[10][counter]= Col.sigma_e	[0];
+    pData[10][counter]= Col.sigma_p	[0];
 
 }
 /****************************************************************************************************/

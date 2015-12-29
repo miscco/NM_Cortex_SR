@@ -29,7 +29,8 @@
 /****************************************************************************************************/
 /* 		Implementation of the simulation as MATLAB routine (mex compiler)							*/
 /* 		mex command is given by:																	*/
-/* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_mex.cpp Cortical_Column.cpp Sleep_Regulation.cpp*/
+/* 		mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex_SR_mex.cpp Cortical_Column.cpp				*/
+/*												 Sleep_Regulation.cpp								*/
 /****************************************************************************************************/
 #include "mex.h"
 #include "matrix.h"
@@ -73,7 +74,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
 	/* Data container in MATLAB format */
 	vector<mxArray*> Data;
-	Data.push_back(SetMexArray(1, T*res/red));	// Ve
+    Data.push_back(SetMexArray(1, T*res/red));	// Vp
 	Data.push_back(SetMexArray(1, T*res/red));	// Na
 	Data.push_back(SetMexArray(1, T*res/red));	// f_W
 	Data.push_back(SetMexArray(1, T*res/red));	// f_N
@@ -83,7 +84,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	Data.push_back(SetMexArray(1, T*res/red));	// C_A
 	Data.push_back(SetMexArray(1, T*res/red));	// h
 	Data.push_back(SetMexArray(1, T*res/red));	// g_KNa
-	Data.push_back(SetMexArray(1, T*res/red));	// sigma_e
+    Data.push_back(SetMexArray(1, T*res/red));	// sigma_p
 
 	/* Pointer to the data blocks */
 	vector<double*> pData(Data.size(), NULL);

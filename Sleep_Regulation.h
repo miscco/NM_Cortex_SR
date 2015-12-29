@@ -21,9 +21,9 @@
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  *
- *	Based on:	Modeling the effect of sleep regulation on a neural mass model.
- *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
- *				Journal of Computational Neuroscience (in review)
+ *	Based on:	A Fast-Slow Analysis of the Dynamics of REM Sleep.
+ *				CG Diniz Behn and V Booth
+ *				SIAM Journal on Applied Dynamical Systems 11(1), 212–242 (2012)
  */
 
 /************************************************************************************************/
@@ -103,7 +103,7 @@ private:
 
 	/* Sigmoid threshold parameters in [aU] */
 	const double 	beta_W		= -0.4;
-/*  const double	beta_N		= k * h(t); */
+/*  const double	beta_N		= kappa * h(t); */
 	const double 	beta_R		= -0.9;
 
 	/* Neurotransmitter release scaling in [s^-1] */
@@ -124,16 +124,12 @@ private:
 	const double	theta_W		= 2.;		/* in [s] */
 	const int		tau_hw		= 34830E3;	/* 580.5 min in [s] */
 	const int		tau_hs		= 30600E3;	/* 510 min in [s] */
-	const double	k			= 1.5;		/* in [aU] */
+    const double	kappa		= 1.5;		/* in [aU] */
 
 	/* Bifurcation parameters */
 	/* KNa */
 	const double	g_KNa_0		= 1.33;
 	const double	tau_g		= 10;
-
-	/* Sigmoid gain in mV */
-	const double	sigma_e_0	= 7;
-	const double	tau_s		= 10;
 
 	/* SRK integration parameters */
 	const vector<double> A = {0.5, 0.5, 1.0, 1.0};

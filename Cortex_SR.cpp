@@ -27,7 +27,7 @@
  */
 
 /****************************************************************************************************/
-/*		Main file for compilation and runtime tests													*/
+/*							Main file for compilation and runtime tests								*/
 /****************************************************************************************************/
 #include <iostream>
 #include <chrono>
@@ -70,7 +70,7 @@ int main(void) {
 	/* Time consumed by the simulation */
 	double dif = 1E-3*std::chrono::duration_cast<std::chrono::milliseconds>( end - start ).count();
 	std::cout << "simulation done!\n";
-	std::cout << "took " << dif 	<< " seconds" << "\n";
+	std::cout << "took " << dif << " seconds" << "\n";
 	std::cout << "end\n";
 }
 /****************************************************************************************************/
