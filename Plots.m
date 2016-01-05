@@ -1,5 +1,5 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++11" Cortex_SR_mex.cpp Cortical_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" Cortex_SR_mex.cpp Cortical_Column.cpp
 % Sleep_Regulation.cpp
 
 function Plots(type)

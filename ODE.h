@@ -32,7 +32,7 @@
 /****************************************************************************************************/
 /*										Evaluation of SRK4											*/
 /****************************************************************************************************/
-inline void ODE(Cortical_Column& Cortex, Sleep_Regulation& SR) {
+void ODE(Cortical_Column& Cortex, Sleep_Regulation& SR) {
 	/* First calculate every ith RK moment. Has to be in order, 1th moment first */
 	for (int i=0; i<4; ++i) {
 		SR.set_RK(i);

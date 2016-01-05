@@ -32,7 +32,7 @@
 /****************************************************************************************************/
 /*											Save data												*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, vector<double*> pData) {
+void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, vector<double*> pData) {
     pData[0][counter] = Col.Vp		[0];
 	pData[1][counter] = Col.Vi		[0];
 	pData[2][counter] = SR.f_W		[0];

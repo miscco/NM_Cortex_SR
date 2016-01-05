@@ -80,16 +80,16 @@ public:
 	friend class Cortical_Column;
 
 private:
-	/* Declaration and Initialization of parameters */
+	/* Declaration and initialization of parameters */
 	/* Membrane time in [s] */
 	const int		tau_W 		= 1500E3;
 	const int		tau_N 		= 600E3;
 	const int		tau_R 		= 60E3;
 
 	/* Neurotransmitter time constants in [ms] */
-	const int		tau_E 		= 25E1;
-	const int		tau_G 		= 10E1;
-	const int		tau_A 		= 10E1;
+	const int		tau_E 		= 25E3;
+	const int		tau_G 		= 10E3;
+	const int		tau_A 		= 10E3;
 
 	/* Maximum firing rate in [s^-1] */
 	const double 	F_W_max		= 6.5;
@@ -134,7 +134,8 @@ private:
 	/* SRK integration parameters */
 	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
 	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
-
+	
+	/* Declaration and initialization of variables */
 	/* Population variables */
 	vector<double> 	f_W		= _INIT(6.),	/* Wake promoting activity	in [s^-1]	*/
 					f_N		= _INIT(1E-3),	/* Sleep promoting activity	in [s^-1] 	*/

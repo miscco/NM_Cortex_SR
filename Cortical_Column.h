@@ -100,13 +100,7 @@ public:
 	friend void get_data (int, Cortical_Column&, Sleep_Regulation&, vector<double*>);
 
 private:
-	/* Random number generators */
-    vector<random_stream_normal> MTRands;
-
-	/* Container for noise */
-	vector<double>	Rand_vars;
-
-	/* Declaration and Initialization of parameters */
+	/* Declaration and initialization of parameters */
 	/* Membrane time in ms */
     const double 	tau_p 		= 30;
 	const double 	tau_i 		= 30;
@@ -128,11 +122,11 @@ private:
 	const double 	C1		= (3.14159265/sqrt(3));
 
 	/* Parameters of the firing adaption */
-	const double 	alpha_Na	= 2.;		/* Sodium influx per spike  in mM ms 	*/
-	const double 	tau_Na		= 1.;		/* Sodium time constant	    in ms 	*/
+	const double 	alpha_Na	= 2.;			/* Sodium influx per spike  in mM ms 	*/
+	const double 	tau_Na		= 1.;			/* Sodium time constant	    in ms		*/
 
 	const double 	R_pump   	= 0.09;        	/* Na-K pump constant	    in mM/ms 	*/
-	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM 	*/
+	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM		*/
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
@@ -140,9 +134,9 @@ private:
 
 	/* Conductivities in aU */
 	/* Leak */
-	const double 	g_L    		= 1;
-	const double 	g_AMPA 		= 1;
-	const double 	g_GABA 		= 1;
+	const double 	g_L    		= 1.;
+	const double 	g_AMPA 		= 1.;
+	const double 	g_GABA 		= 1.;
 
 	/* KNa */
 	const double	g_KNa_0		= 1.33;
@@ -166,30 +160,38 @@ private:
 	double			input		= 0.0;
 
 	/* Connectivities (dimensionless) */
+	/* Label indicates N_{from -> to} */
     const double 	N_pp		= 120;
-    const double 	N_pi		= 72;
-    const double 	N_ip		= 90;
+    const double 	N_ip		= 72;
+    const double 	N_pi		= 90;
 	const double 	N_ii		= 90;
 
 	/* SRK integration parameters */
 	const vector<double> A		= {0.5, 0.5, 1.0, 1.0};
 	const vector<double> B		= {0.75, 0.75, 0.0, 0.0};
+	
+	/* Declaration and initialization of variables */	
+	/* Random number generators */
+    vector<random_stream_normal> MTRands;
+
+	/* Container for noise */
+	vector<double>	Rand_vars;
 
 	/* Pointer to sleep regulatory network */
 	Sleep_Regulation* SR		= NULL;
 
 	/* Population variables */
-    vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal membrane voltage						*/
+    vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal  membrane voltage						*/
 					Vi		= _INIT(E_L_i),		/* Inhibitory membrane voltage						*/
 					Na		= _INIT(Na_eq),		/* Na concentration									*/
-                    y_ep	= _INIT(0.0),		/* PostSP from pyramidal  to pyramidal population	*/
-                    y_ei	= _INIT(0.0),		/* PostSP from pyramidal  to inhibitory population	*/
-                    y_gp	= _INIT(0.0),		/* PostSP from inhibitory to pyramidal population	*/
-                    y_gi	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
-                    x_ep	= _INIT(0.0),		/* derivative of y_ep								*/
-					x_ei	= _INIT(0.0),		/* derivative of y_ei								*/
-                    x_gp	= _INIT(0.0),		/* derivative of y_gp				 				*/
-                    x_gi	= _INIT(0.0),		/* derivative of y_gi								*/
+                    y_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
+                    y_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
+                    y_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
+                    y_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
+                    x_ep	= _INIT(0.0),		/* Derivative of y_ep								*/
+					x_ei	= _INIT(0.0),		/* Derivative of y_ei								*/
+                    x_gp	= _INIT(0.0),		/* Derivative of y_gp				 				*/
+                    x_gi	= _INIT(0.0),		/* Derivative of y_gi								*/
 					g_KNa	= _INIT(g_KNa_0),	/* Adaptation strength								*/
                     sigma_p	= _INIT(sigma_p_0);	/* Inverse neural gain								*/
 };
