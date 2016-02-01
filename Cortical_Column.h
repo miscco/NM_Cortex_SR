@@ -119,7 +119,7 @@ private:
 	const double 	sigma_i		= 6;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1		= (3.14159265/sqrt(3));
+	const double 	C1			= (M_PI/sqrt(3));
 
 	/* Parameters of the firing adaption */
 	const double 	alpha_Na	= 2.;			/* Sodium influx per spike  in mM ms 	*/
