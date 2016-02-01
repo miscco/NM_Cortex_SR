@@ -132,13 +132,15 @@ private:
 	const double 	gamma_e		= 70E-3;
     const double 	gamma_g		= 58.6E-3;
 
-	/* Conductivities in aU */
-	/* Leak */
+	/* Conductivities */
+	/* Leak  in aU */
 	const double 	g_L    		= 1.;
+
+	/* Synaptic conductivity in ms */
 	const double 	g_AMPA 		= 1.;
 	const double 	g_GABA 		= 1.;
 
-	/* KNa */
+	/* KNa in mS/m^2 */
 	const double	g_KNa_0		= 1.33;
 	const int		tau_g		= 10;
 
@@ -184,14 +186,14 @@ private:
     vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal  membrane voltage						*/
 					Vi		= _INIT(E_L_i),		/* Inhibitory membrane voltage						*/
 					Na		= _INIT(Na_eq),		/* Na concentration									*/
-                    y_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
-                    y_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
-                    y_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
-                    y_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
-                    x_ep	= _INIT(0.0),		/* Derivative of y_ep								*/
-					x_ei	= _INIT(0.0),		/* Derivative of y_ei								*/
-                    x_gp	= _INIT(0.0),		/* Derivative of y_gp				 				*/
-                    x_gi	= _INIT(0.0),		/* Derivative of y_gi								*/
+                    s_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
+                    s_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
+                    s_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
+                    s_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
+                    x_ep	= _INIT(0.0),		/* Derivative of s_ep								*/
+					x_ei	= _INIT(0.0),		/* Derivative of s_ei								*/
+                    x_gp	= _INIT(0.0),		/* Derivative of s_gp				 				*/
+                    x_gi	= _INIT(0.0),		/* Derivative of s_gi								*/
 					g_KNa	= _INIT(g_KNa_0),	/* Adaptation strength								*/
                     sigma_p	= _INIT(sigma_p_0);	/* Inverse neural gain								*/
 };
