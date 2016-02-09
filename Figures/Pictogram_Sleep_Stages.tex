@@ -1,0 +1,107 @@
+% command to run this on the terminal is lualatex -shell-escape Pictogram_Sleep_Stages_SO.tex
+% requires pgfplots
+
+\pdfpxdimen=1in
+\divide\pdfpxdimen by 600
+
+\documentclass[10pt]{standalone}
+\usepackage{pgfplots}
+
+% and optionally (as of Pgfplots 1.3):
+\pgfplotsset{compat=newest}
+\pgfplotsset{plot coordinates/math parser=false}
+
+%has to be compiled with ``lualatex -shell-escape Pictogram_Sleep_Stages.tex''
+\usetikzlibrary{external, shapes, backgrounds}
+\xdefinecolor{backgreen}{RGB}{217, 228, 214}
+\xdefinecolor{textgreen}{RGB}{ 63, 150,  97}
+\xdefinecolor{backred}  {RGB}{227, 204, 210}
+\xdefinecolor{textred}  {RGB}{181,  24,  41}
+\tikzstyle{densely dashed}= [dash pattern=on 4pt off 1.5pt]
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% set up externalization
+%\tikzexternalize[prefix=tikz/]
+% WARNING the name of the Image CANNOT be the same as the tex file
+\tikzsetnextfilename{Pictogram_Sleep_Overview}
+\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error
+-interaction=batchmode -jobname "\image" "\texsource";
+convert -density 600 -compress LZW "\image".pdf -flatten -alpha off -colorspace RGB -depth 8 "\image".tif;
+convert -density 600 "\image".tif  "\image".jpg;}}
+\tikzexternalize
+
+\begin{document}
+  \begin{tikzpicture}
+  [subfig/.style={draw, rounded corners, line width =1pt},
+   neuro/.style={draw, rounded corners, minimum width=6cm},
+   sleep/.style={line width = 1pt, sharp corners},
+   rem/.style={line width = 10pt, sharp corners},
+   SWS/.style={ellipse split, minimum width=5.8cm, inner sep=1pt, fill =backred,   text=textred},
+   REM/.style={ellipse split, minimum width=5.8cm, inner sep=1pt, fill =backgreen, text=textgreen},
+   SLEEP/.style={rectangle,fill = gray!30, minimum width = 6cm, minimum height =0.8cm, sharp corners},
+   axis/.style={line width = 1pt, ->, >=latex},
+  ]
+     % YLabels
+      \node[left] (W)   at (0,0)	{W};
+      \node[left] (REM) at (0,-1)	{REM};
+      \node[left] (N1)  at (0,-2)	{N1};
+      \node[left] (N2)  at (0,-3)	{N2};
+      \node[left] (N3)  at (0,-4)	{N3};
+      % Hypnogram
+      \draw[sleep] (W)--(0.6,     0) 
+	      --(0.6,  -2)  --(1.2,   -2) 
+	      --(1.2,  -3)  --(1.4,   -3) 
+	      --(1.4,  -4)  --(2.4,   -4) 
+	      --(2.4,  -3)  --(2.6,   -3) 
+	      --(2.6,  -2)  --(2.8,   -2)  
+	      --(2.8,-0.82) --(3.0, -0.82) 
+	      --(3.0,  -2)  --(3.2,   -2)  
+	      --(3.2,  -3)  --(3.6,   -3)  
+	      --(3.6,  -4)  --(4.6,   -4)  
+	      --(4.6,  -3)  --(4.8,   -3) 
+	      --(4.8,-0.82) --(5.2, -0.82) 
+	      --(5.2,  -2)  --(5.4,   -2)  
+	      --(5.4,  -3)  --(6.0,   -3)  
+	      --(6.0,  -4)  --(6.6,   -4)  
+	      --(6.6,  -3)  --(7.0,   -3)  
+	      --(7.0,-0.82) --(8.0, -0.82)  
+	      --(8.0,  -2)  --(8.2,   -2)   
+	      --(8.2,  -3)  --(8.4,   -3)   
+	      --(8.4,  -4)  --(8.6,   -4)   
+	      --(8.6,  -3)  --(9.0,   -3)   
+	      --(9.0, -0.82)--(9.8,-0.82)  
+	      --(9.8,  -2)  --(10.0,  -2)  
+	      --(10.0, -3)  --(10.6,  -3)  
+	      --(10.6,-0.82)--(11.8,-0.82)  
+	      --(11.8, -2)  --(12.1,  -2)  
+	      --(12.1, -3)  --(12.75, -3)  
+	      --(12.75, -0) --(13.5,  -0);
+      \draw[rem] (2.8,  -1) --(3.0,  -1)
+		 (4.8,  -1) --(5.2,  -1)
+		 (7.0,  -1) --(8.0,  -1)
+		 (9.0,  -1) --(9.8, -1)
+		 (10.6, -1) --(11.8, -1);
+      % separation between sleeps stages
+      \draw[line width = 2pt,densely dashed] (6.7, 1) -- (6.7, -6);
+      % Axis with time
+      \draw[axis] (0, -6) -- (13.5, -6);
+      \node[right, below] at (13.5, -6) {h};
+      \node[below] at ( 0.75, -6) {23:00};
+      \node[below] at ( 2.25, -6) { 0:00};
+      \node[below] at ( 3.75, -6) { 1:00};
+      \node[below] at ( 5.25, -6) { 2:00};
+      \node[below] at ( 6.75, -6) { 3:00};
+      \node[below] at ( 8.25, -6) { 4:00};
+      \node[below] at ( 9.75, -6) { 5:00};
+      \node[below] at (11.25, -6) { 6:00};
+      \node[below] at (12.75, -6) { 7:00};
+  % Background indicators
+  \begin{pgfonlayer}{background}
+    \node[SLEEP] at (3.6, -5.5) {Early sleep}; 
+    \node[SLEEP] at (9.8, -5.5) {Late sleep};
+    \node[SWS]   at (4, -4) {\nodepart{lower}Slow wave sleep};
+    \node[REM]   at (9.4, -0.85) {REM sleep};
+  \end{pgfonlayer}
+  \end{tikzpicture}
+\end{document}
