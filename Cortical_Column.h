@@ -24,7 +24,7 @@
  *	Based on:	Characterization of K-Complexes and Slow Wave Activity in a Neural Mass Model
  *				A Weigenand, M Schellenberger Costa, H-VV Ngo, JC Claussen, T Martinetz
  *				PLoS Computational Biology. 2014;10:e1003923
- * 
+ *
  *				Modeling the effect of sleep regulation on a neural mass model.
  *				M Schellenberger Costa, J Born, JC Claussen, T Martinetz.
  *				Journal of Computational Neuroscience (in review)
@@ -70,15 +70,15 @@ public:
 	void	connect_SR (Sleep_Regulation& SR_Network) {SR = &SR_Network;}
 
 	/* Firing rates */
-    double 	get_Qp		(int) const;
+	double 	get_Qp		(int) const;
 	double 	get_Qi		(int) const;
 
 	/* Currents */
-    double 	I_ep		(int) const;
+	double 	I_ep		(int) const;
 	double 	I_ei		(int) const;
-    double 	I_gp		(int) const;
-    double 	I_gi		(int) const;
-    double 	I_L_p		(int) const;
+	double 	I_gp		(int) const;
+	double 	I_gi		(int) const;
+	double 	I_L_p		(int) const;
 	double 	I_L_i		(int) const;
 	double 	I_KNa		(int) const;
 
@@ -102,19 +102,19 @@ public:
 private:
 	/* Declaration and initialization of parameters */
 	/* Membrane time in ms */
-    const double 	tau_p 		= 30;
+	const double 	tau_p 		= 30;
 	const double 	tau_i 		= 30;
 
 	/* Maximum firing rate in ms^-1 */
-    const double 	Qp_max		= 30.E-3;
+	const double 	Qp_max		= 30.E-3;
 	const double 	Qi_max		= 60.E-3;
 
 	/* Sigmoid threshold in mV */
-    const double 	theta_p		= -58.5;
+	const double 	theta_p		= -58.5;
 	const double 	theta_i		= -58.5;
 
 	/* Sigmoid gain in mV */
-    const double	sigma_p_0	= 7;
+	const double	sigma_p_0	= 7;
 	const int		tau_s		= 100;
 	const double 	sigma_i		= 6;
 
@@ -130,17 +130,19 @@ private:
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
-    const double 	gamma_g		= 58.6E-3;
+	const double 	gamma_g		= 58.6E-3;
 
-	/* Conductivities */
-	/* Leak  in aU */
+	/* Membrane capacitance */
+	const double	C_m			= 1;
+
+	/* Leak weight in aU */
 	const double 	g_L    		= 1.;
 
-	/* Synaptic conductivity in ms */
+	/* Synaptic weight in ms */
 	const double 	g_AMPA 		= 1.;
 	const double 	g_GABA 		= 1.;
 
-	/* KNa in mS/m^2 */
+	/* KNa condutivity in mS/m^2 */
 	const double	g_KNa_0		= 1.33;
 	const int		tau_g		= 10;
 
@@ -150,7 +152,7 @@ private:
 	const double 	E_GABA  	= -70;
 
 	/* Leak */
-    const double 	E_L_p 		= -66;
+	const double 	E_L_p 		= -66;
 	const double 	E_L_i 		= -64;
 
 	/* Potassium */
@@ -163,18 +165,18 @@ private:
 
 	/* Connectivities (dimensionless) */
 	/* Label indicates N_{from -> to} */
-    const double 	N_pp		= 120;
-    const double 	N_ip		= 72;
-    const double 	N_pi		= 90;
+	const double 	N_pp		= 120;
+	const double 	N_ip		= 72;
+	const double 	N_pi		= 90;
 	const double 	N_ii		= 90;
 
 	/* SRK integration parameters */
 	const vector<double> A		= {0.5, 0.5, 1.0, 1.0};
 	const vector<double> B		= {0.75, 0.75, 0.0, 0.0};
-	
-	/* Declaration and initialization of variables */	
+
+	/* Declaration and initialization of variables */
 	/* Random number generators */
-    vector<random_stream_normal> MTRands;
+	vector<random_stream_normal> MTRands;
 
 	/* Container for noise */
 	vector<double>	Rand_vars;
@@ -183,19 +185,19 @@ private:
 	Sleep_Regulation* SR		= NULL;
 
 	/* Population variables */
-    vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal  membrane voltage						*/
+	vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal  membrane voltage						*/
 					Vi		= _INIT(E_L_i),		/* Inhibitory membrane voltage						*/
 					Na		= _INIT(Na_eq),		/* Na concentration									*/
-                    s_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
-                    s_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
-                    s_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
-                    s_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
-                    x_ep	= _INIT(0.0),		/* Derivative of s_ep								*/
+					s_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
+					s_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
+					s_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
+					s_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
+					x_ep	= _INIT(0.0),		/* Derivative of s_ep								*/
 					x_ei	= _INIT(0.0),		/* Derivative of s_ei								*/
-                    x_gp	= _INIT(0.0),		/* Derivative of s_gp				 				*/
-                    x_gi	= _INIT(0.0),		/* Derivative of s_gi								*/
+					x_gp	= _INIT(0.0),		/* Derivative of s_gp				 				*/
+					x_gi	= _INIT(0.0),		/* Derivative of s_gi								*/
 					g_KNa	= _INIT(g_KNa_0),	/* Adaptation strength								*/
-                    sigma_p	= _INIT(sigma_p_0);	/* Inverse neural gain								*/
+					sigma_p	= _INIT(sigma_p_0);	/* Inverse neural gain								*/
 };
 /****************************************************************************************************/
 /*										 		end			 										*/
