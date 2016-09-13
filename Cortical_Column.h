@@ -30,174 +30,167 @@
  *				Journal of Computational Neuroscience (in review)
  */
 
-/************************************************************************************************/
-/*								Header file of a cortical module								*/
-/************************************************************************************************/
+/******************************************************************************/
+/*						Implementation of a cortical module					  */
+/******************************************************************************/
 #pragma once
 #include <cmath>
 #include <vector>
+
 #include "Random_Stream.h"
 #include "Sleep_Regulation.h"
-using std::vector;
 
-/****************************************************************************************************/
-/*									Macro for vector initialization									*/
-/****************************************************************************************************/
-#ifndef _INIT
-#define _INIT(x)	{x, 0.0, 0.0, 0.0, 0.0}
-#endif
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*									Definition of the cortical module 								*/
-/****************************************************************************************************/
 class Cortical_Column {
 public:
-	/* Constructors */
-	Cortical_Column(void)
-	{set_RNG();}
+    Cortical_Column(void) {set_RNG();}
 
-	/* Initialize the RNGs */
-	void 	set_RNG		(void);
+    void	set_input	(double I) {input = I;}
 
-	/* Set strength of input */
-	void	set_input	(double I) {input = I;}
+    void 	set_RK		(int);
+    void 	add_RK	 	(void);
 
-	/* Connect cortex to the sleep regulatory network */
-	void	connect_SR (Sleep_Regulation& SR_Network) {SR = &SR_Network;}
-
-	/* Firing rates */
-	double 	get_Qp		(int) const;
-	double 	get_Qi		(int) const;
-
-	/* Currents */
-	double 	I_ep		(int) const;
-	double 	I_ei		(int) const;
-	double 	I_gp		(int) const;
-	double 	I_gi		(int) const;
-	double 	I_L_p		(int) const;
-	double 	I_L_i		(int) const;
-	double 	I_KNa		(int) const;
-
-	/* Potassium pump */
-	double 	Na_pump		(int) const;
-
-	/* Bifurcation Parameter update */
-	void	Update_Bifurcation_Parameters (void);
-
-	/* Noise function */
-	double 	noise_xRK 	(int, int) const;
-	double 	noise_aRK 	(int) const;
-
-	/* ODE functions */
-	void 	set_RK		(int);
-	void 	add_RK	 	(void);
-
-	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, Sleep_Regulation&, vector<double*>);
-
+    void	connect_SR (Sleep_Regulation& SR_Network) {
+        SR = &SR_Network;
+        Update_Bifurcation_Parameters();
+    }
 private:
-	/* Declaration and initialization of parameters */
-	/* Membrane time in ms */
-	const double 	tau_p 		= 30;
-	const double 	tau_i 		= 30;
+    /* Initialize the RNGs */
+    void 	set_RNG		(void);
 
-	/* Maximum firing rate in ms^-1 */
-	const double 	Qp_max		= 30.E-3;
-	const double 	Qi_max		= 60.E-3;
+    /* Firing rates */
+    double 	get_Qp		(int) const;
+    double 	get_Qi		(int) const;
 
-	/* Sigmoid threshold in mV */
-	const double 	theta_p		= -58.5;
-	const double 	theta_i		= -58.5;
+    /* Currents */
+    double 	I_ep		(int) const;
+    double 	I_ei		(int) const;
+    double 	I_gp		(int) const;
+    double 	I_gi		(int) const;
+    double 	I_L_p		(int) const;
+    double 	I_L_i		(int) const;
+    double 	I_KNa		(int) const;
 
-	/* Sigmoid gain in mV */
-	const double	sigma_p_0	= 7;
-	const int		tau_s		= 100;
-	const double 	sigma_i		= 6;
+    /* Potassium pump */
+    double 	Na_pump		(int) const;
 
-	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1			= (M_PI/sqrt(3));
+    /* Bifurcation Parameter update */
+    void	Update_Bifurcation_Parameters (void);
 
-	/* Parameters of the firing adaption */
-	const double 	alpha_Na	= 2.;			/* Sodium influx per spike  in mM ms 	*/
-	const double 	tau_Na		= 1.;			/* Sodium time constant	    in ms		*/
+    /* Noise function */
+    double 	noise_xRK 	(int, int) const;
+    double 	noise_aRK 	(int) const;
 
-	const double 	R_pump   	= 0.09;        	/* Na-K pump constant	    in mM/ms 	*/
-	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM		*/
+    /* Helper functions */
+    inline std::vector<double> init (double value)
+    {return {value, 0.0, 0.0, 0.0, 0.0};}
 
-	/* PSP rise time in ms^-1 */
-	const double 	gamma_e		= 70E-3;
-	const double 	gamma_g		= 58.6E-3;
+    inline void add_RK (std::vector<double>& var)
+    {var[0] = (-3*var[0] + 2*var[1] + 4*var[2] + 2*var[3] + var[4])/6;}
 
-	/* Membrane capacitance */
-	const double	C_m			= 1;
+    inline void add_RK_noise (std::vector<double>& var, unsigned noise)
+    {var[0] = (-3*var[0] + 2*var[1] + 4*var[2] + 2*var[3] + var[4])/6 + noise_aRK(noise);}
 
-	/* Leak weight in aU */
-	const double 	g_L    		= 1.;
+    /* Declaration and initialization of parameters */
+    /* Membrane time in ms */
+    const double 	tau_p 		= 30;
+    const double 	tau_i 		= 30;
 
-	/* Synaptic weight in ms */
-	const double 	g_AMPA 		= 1.;
-	const double 	g_GABA 		= 1.;
+    /* Maximum firing rate in ms^-1 */
+    const double 	Qp_max		= 30.E-3;
+    const double 	Qi_max		= 60.E-3;
 
-	/* KNa condutivity in mS/m^2 */
-	const double	g_KNa_0		= 1.33;
-	const int		tau_g		= 10;
+    /* Sigmoid threshold in mV */
+    const double 	theta_p		= -58.5;
+    const double 	theta_i		= -58.5;
 
-	/* Reversal potentials in mV */
-	/* Synaptic */
-	const double 	E_AMPA  	= 0;
-	const double 	E_GABA  	= -70;
+    /* Sigmoid gain in mV */
+    const double	sigma_p_0	= 7;
+    const int		tau_s		= 100;
+    const double 	sigma_i		= 6;
 
-	/* Leak */
-	const double 	E_L_p 		= -66;
-	const double 	E_L_i 		= -64;
+    /* Scaling parameter for sigmoidal mapping (dimensionless) */
+    const double 	C1			= (M_PI/sqrt(3));
 
-	/* Potassium */
-	const double 	E_K    		= -100;
+    /* Parameters of the firing adaption */
+    const double 	alpha_Na	= 2.;			/* Sodium influx per spike  in mM ms 	*/
+    const double 	tau_Na		= 1.;			/* Sodium time constant	    in ms		*/
 
-	/* Noise parameters in ms^-1 */
-	const double 	mphi		= 0.0;
-	const double	dphi		= 20E-1;
-	double			input		= 0.0;
+    const double 	R_pump   	= 0.09;        	/* Na-K pump constant	    in mM/ms 	*/
+    const double 	Na_eq    	= 9.5;         	/* Na-eq concentration	    in mM		*/
 
-	/* Connectivities (dimensionless) */
-	/* Label indicates N_{from -> to} */
-	const double 	N_pp		= 120;
-	const double 	N_ip		= 72;
-	const double 	N_pi		= 90;
-	const double 	N_ii		= 90;
+    /* PSP rise time in ms^-1 */
+    const double 	gamma_e		= 70E-3;
+    const double 	gamma_g		= 58.6E-3;
 
-	/* SRK integration parameters */
-	const vector<double> A		= {0.5, 0.5, 1.0, 1.0};
-	const vector<double> B		= {0.75, 0.75, 0.0, 0.0};
+    /* Membrane capacitance */
+    const double	C_m			= 1;
 
-	/* Declaration and initialization of variables */
-	/* Random number generators */
-	vector<random_stream_normal> MTRands;
+    /* Leak weight in aU */
+    const double 	g_L    		= 1.;
 
-	/* Container for noise */
-	vector<double>	Rand_vars;
+    /* Synaptic weight in ms */
+    const double 	g_AMPA 		= 1.;
+    const double 	g_GABA 		= 1.;
 
-	/* Pointer to sleep regulatory network */
-	Sleep_Regulation* SR		= NULL;
+    /* KNa condutivity in mS/m^2 */
+    const double	g_KNa_0		= 1.33;
+    const int		tau_g		= 10;
 
-	/* Population variables */
-	vector<double> 	Vp		= _INIT(E_L_p),		/* Pyramidal  membrane voltage						*/
-					Vi		= _INIT(E_L_i),		/* Inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),		/* Na concentration									*/
-					s_ep	= _INIT(0.0),		/* PostSP excitatory input to pyramidal  population	*/
-					s_ei	= _INIT(0.0),		/* PostSP excitatory input to inhibitory population	*/
-					s_gp	= _INIT(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
-					s_gi	= _INIT(0.0),		/* PostSP inhibitory input to inhibitory population	*/
-					x_ep	= _INIT(0.0),		/* Derivative of s_ep								*/
-					x_ei	= _INIT(0.0),		/* Derivative of s_ei								*/
-					x_gp	= _INIT(0.0),		/* Derivative of s_gp				 				*/
-					x_gi	= _INIT(0.0),		/* Derivative of s_gi								*/
-					g_KNa	= _INIT(g_KNa_0),	/* Adaptation strength								*/
-					sigma_p	= _INIT(sigma_p_0);	/* Inverse neural gain								*/
+    /* Reversal potentials in mV */
+    /* Synaptic */
+    const double 	E_AMPA  	= 0;
+    const double 	E_GABA  	= -70;
+
+    /* Leak */
+    const double 	E_L_p 		= -66;
+    const double 	E_L_i 		= -64;
+
+    /* Potassium */
+    const double 	E_K    		= -100;
+
+    /* Noise parameters in ms^-1 */
+    const double 	mphi		= 0.0;
+    const double	dphi		= 20E-1;
+    double			input		= 0.0;
+
+    /* Connectivities (dimensionless) */
+    /* Label indicates N_{from -> to} */
+    const double 	N_pp		= 120;
+    const double 	N_ip		= 72;
+    const double 	N_pi		= 90;
+    const double 	N_ii		= 90;
+
+    /* SRK integration parameters */
+    const std::vector<double> A	= {0.5, 0.5, 1.0, 1.0};
+    const std::vector<double> B	= {0.75, 0.75, 0.0, 0.0};
+
+    /* Declaration and initialization of variables */
+    /* Random number generators */
+    std::vector<random_stream_normal> MTRands;
+
+    /* Container for noise */
+    std::vector<double>	Rand_vars;
+
+    /* Pointer to sleep regulatory network */
+    Sleep_Regulation* SR		= NULL;
+
+    /* Population variables */
+    std::vector<double> Vp		= init(E_L_p),		/* Pyramidal  membrane voltage						*/
+                        Vi		= init(E_L_i),		/* Inhibitory membrane voltage						*/
+                        Na		= init(Na_eq),		/* Na concentration									*/
+                        s_ep	= init(0.0),		/* PostSP excitatory input to pyramidal  population	*/
+                        s_ei	= init(0.0),		/* PostSP excitatory input to inhibitory population	*/
+                        s_gp	= init(0.0),		/* PostSP inhibitory input to pyramidal  population	*/
+                        s_gi	= init(0.0),		/* PostSP inhibitory input to inhibitory population	*/
+                        x_ep	= init(0.0),		/* Derivative of s_ep								*/
+                        x_ei	= init(0.0),		/* Derivative of s_ei								*/
+                        x_gp	= init(0.0),		/* Derivative of s_gp				 				*/
+                        x_gi	= init(0.0),		/* Derivative of s_gi								*/
+                        g_KNa	= init(g_KNa_0),	/* Adaptation strength								*/
+                        sigma_p	= init(sigma_p_0);	/* Inverse neural gain								*/
+
+    /* Data storage  access */
+    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>);
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

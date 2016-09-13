@@ -26,121 +26,109 @@
  *				SIAM Journal on Applied Dynamical Systems 11(1), 212–242 (2012)
  */
 
-/************************************************************************************************/
-/*							Header file of a sleep regulation module							*/
-/************************************************************************************************/
+/******************************************************************************/
+/*				Implementation of a sleep regulation module					  */
+/******************************************************************************/
 #pragma once
 #include <cmath>
 #include <vector>
-using std::vector;
 class Cortical_Column;
 
-/****************************************************************************************************/
-/*									Macro for vector initialization									*/
-/****************************************************************************************************/
-#ifndef _INIT
-#define _INIT(x)	{x, 0.0, 0.0, 0.0, 0.0}
-#endif
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*								Implementation of the sleep regulatory model						*/
-/****************************************************************************************************/
 class Sleep_Regulation {
 public:
-	/* Constructors */
-	Sleep_Regulation(void)
-	{ C_E = _INIT(tanh(f_W[0]/gamma_E));
-	  C_G = _INIT(tanh(f_N[0]/gamma_G));
-	  C_A = _INIT(tanh(f_R[0]/gamma_A));
-	}
+    /* Constructors */
+    Sleep_Regulation(void)
+    { C_E = init(tanh(f_W[0]/gamma_E));
+        C_G = init(tanh(f_N[0]/gamma_G));
+        C_A = init(tanh(f_R[0]/gamma_A));
+    }
 
-	Sleep_Regulation(double* Par)
-	: f_W(_INIT(Par[0])), f_N(_INIT(Par[1])), f_R(_INIT(Par[2])), h(_INIT(Par[3]))
-	{ C_E = _INIT(tanh(f_W[0]/gamma_E));
-	  C_G = _INIT(tanh(f_N[0]/gamma_G));
-	  C_A = _INIT(tanh(f_R[0]/gamma_A));
-	}
+    Sleep_Regulation(double* Par)
+        : f_W(init(Par[0])), f_N(init(Par[1])), f_R(init(Par[2])), h(init(Par[3]))
+    { C_E = init(tanh(f_W[0]/gamma_E));
+        C_G = init(tanh(f_N[0]/gamma_G));
+        C_A = init(tanh(f_R[0]/gamma_A));
+    }
 
-	/* Input functions */
-	double I_W(int) const;
-	double I_N(int) const;
-	double I_R(int) const;
-
-	/* ODE functions */
-	void 	set_RK		(int);
-	void 	add_RK	 	(void);
-	void	iterate_ODE	(void);
-
-	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, Sleep_Regulation&, vector<double*>);
-	friend class Cortical_Column;
+    /* ODE functions */
+    void 	set_RK (int);
+    void 	add_RK (void);
 
 private:
-	/* Declaration and initialization of parameters */
-	/* Membrane time in [s] */
-	const int		tau_W 		= 1500E3;
-	const int		tau_N 		= 600E3;
-	const int		tau_R 		= 60E3;
+    /* Input functions */
+    double I_W(int) const;
+    double I_N(int) const;
+    double I_R(int) const;
 
-	/* Neurotransmitter time constants in [ms] */
-	const int		tau_E 		= 25E3;
-	const int		tau_G 		= 10E3;
-	const int		tau_A 		= 10E3;
 
-	/* Maximum firing rate in [s^-1] */
-	const double 	F_W_max		= 6.5;
-	const double 	F_N_max		= 5.;
-	const double 	F_R_max		= 5.;
+    /* Helper functions */
+    inline std::vector<double> init (double value)
+    {return {value, 0.0, 0.0, 0.0, 0.0};}
 
-	/* Sigmoid slope parameters in [aU] */
-	const double 	alpha_W		= 0.5;
-	const double 	alpha_N		= 0.175;
-	const double 	alpha_R		= 0.13;
+    inline void add_RK (std::vector<double>& var)
+    {var[0] = (-3*var[0] + 2*var[1] + 4*var[2] + 2*var[3] + var[4])/6;}
 
-	/* Sigmoid threshold parameters in [aU] */
-	const double 	beta_W		= -0.4;
-/*  const double	beta_N		= kappa * h(t); */
-	const double 	beta_R		= -0.9;
+    /* Declaration and initialization of parameters */
+    /* Membrane time in [s] */
+    const int		tau_W 		= 1500E3;
+    const int		tau_N 		= 600E3;
+    const int		tau_R 		= 60E3;
 
-	/* Neurotransmitter release scaling in [s^-1] */
-	const double 	gamma_E		= 5.;
-	const double	gamma_G		= 4.;
-	const double	gamma_A		= 2.;
+    /* Neurotransmitter time constants in [ms] */
+    const int		tau_E 		= 25E3;
+    const int		tau_G 		= 10E3;
+    const int		tau_A 		= 10E3;
 
-	/* Weights for neurotransmitter efficacy in [aU]*/
-	const double 	g_GW		= -1.68;
-	const double 	g_AW		= 1.;
-	const double 	g_GR		= -1.3;
-	const double 	g_AR		= 1.6;
-	const double 	g_ER		= -4.;
-	const double 	g_EN		= -2.;
+    /* Maximum firing rate in [s^-1] */
+    const double 	F_W_max		= 6.5;
+    const double 	F_N_max		= 5.;
+    const double 	F_R_max		= 5.;
 
-	/* Sleep Homeostasis parameter */
-	const double	H_max		= 1.;		/* in [aU] */
-	const double	theta_W		= 2.;		/* in [s] */
-	const int		tau_hw		= 34830E3;	/* 580.5 min in [s] */
-	const int		tau_hs		= 30600E3;	/* 510 min in [s] */
+    /* Sigmoid slope parameters in [aU] */
+    const double 	alpha_W		= 0.5;
+    const double 	alpha_N		= 0.175;
+    const double 	alpha_R		= 0.13;
+
+    /* Sigmoid threshold parameters in [aU] */
+    const double 	beta_W		= -0.4;
+    /*  const double	beta_N		= kappa * h(t); */
+    const double 	beta_R		= -0.9;
+
+    /* Neurotransmitter release scaling in [s^-1] */
+    const double 	gamma_E		= 5.;
+    const double	gamma_G		= 4.;
+    const double	gamma_A		= 2.;
+
+    /* Weights for neurotransmitter efficacy in [aU]*/
+    const double 	g_GW		= -1.68;
+    const double 	g_AW		= 1.;
+    const double 	g_GR		= -1.3;
+    const double 	g_AR		= 1.6;
+    const double 	g_ER		= -4.;
+    const double 	g_EN		= -2.;
+
+    /* Sleep Homeostasis parameter */
+    const double	H_max		= 1.;		/* in [aU] */
+    const double	theta_W		= 2.;		/* in [s] */
+    const int		tau_hw		= 34830E3;	/* 580.5 min in [s] */
+    const int		tau_hs		= 30600E3;	/* 510 min in [s] */
     const double	kappa		= 1.5;		/* in [aU] */
 
-	/* SRK integration parameters */
-	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
-	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
-	
-	/* Declaration and initialization of variables */
-	/* Population variables */
-	vector<double> 	f_W		= _INIT(6.),	/* Wake promoting activity	in [s^-1]	*/
-					f_N		= _INIT(1E-3),	/* Sleep promoting activity	in [s^-1] 	*/
-					f_R		= _INIT(1E-3),	/* REM promoting activity	in [s^-1] 	*/
-					C_E		= _INIT(0.9),	/* Norephrine concentration	in [aU]		*/
-					C_G		= _INIT(1E-3),	/* GABA concentration		in [aU] 	*/
-					C_A		= _INIT(1E-3),	/* Acetylcholin concentration in [aU] 	*/
-					h		= _INIT(0.5);	/* Homeostatic sleep drive	in [aU] 	*/
+    /* SRK integration parameters */
+    const std::vector<double> A = {0.5, 0.5, 1.0, 1.0};
+    const std::vector<double> B = {0.75, 0.75, 0.0, 0.0};
+
+    /* Declaration and initialization of variables */
+    /* Population variables */
+    std::vector<double>	f_W		= init(6.),	/* Wake promoting activity	in [s^-1]	*/
+    f_N		= init(1E-3),	/* Sleep promoting activity	in [s^-1] 	*/
+    f_R		= init(1E-3),	/* REM promoting activity	in [s^-1] 	*/
+    C_E		= init(0.9),	/* Norephrine concentration	in [aU]		*/
+    C_G		= init(1E-3),	/* GABA concentration		in [aU] 	*/
+    C_A		= init(1E-3),	/* Acetylcholin concentration in [aU] 	*/
+    h		= init(0.5);	/* Homeostatic sleep drive	in [aU] 	*/
+    /* Data storage  access */
+    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>);
+    friend class Cortical_Column;
 };
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 

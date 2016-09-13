@@ -22,27 +22,21 @@
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  */
 
-/****************************************************************************************************/
-/*									Implementation of the ODE solver								*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*                              Combined solver                               */
+/******************************************************************************/
 #pragma once
 #include "Sleep_Regulation.h"
 #include "Cortical_Column.h"
 
-/****************************************************************************************************/
-/*										Evaluation of SRK4											*/
-/****************************************************************************************************/
 void ODE(Cortical_Column& Cortex, Sleep_Regulation& SR) {
-	/* First calculate every ith RK moment. Has to be in order, 1th moment first */
-	for (int i=0; i<4; ++i) {
-		SR.set_RK(i);
-		Cortex.set_RK(i);
-	}
+    /* First calculate every ith RK moment. Has to be in order, 1th moment first */
+    for (unsigned i=0; i < 4; ++i) {
+        SR.set_RK(i);
+        Cortex.set_RK(i);
+    }
 
-	/* Add all moments */
-	SR.add_RK();
-	Cortex.add_RK();
+    /* Add all moments */
+    SR.add_RK();
+    Cortex.add_RK();
 }
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/

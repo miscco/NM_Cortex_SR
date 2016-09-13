@@ -22,30 +22,28 @@
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  */
 
-/****************************************************************************************************/
-/*									Functions for data storage										*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*                        Functions for data storage                          */
+/******************************************************************************/
 #pragma once
+#include <vector>
 #include "Cortical_Column.h"
 #include "Sleep_Regulation.h"
 
-/****************************************************************************************************/
-/*											Save data												*/
-/****************************************************************************************************/
-void get_data(int counter, Cortical_Column& Col, Sleep_Regulation& SR, vector<double*> pData) {
+inline void get_data(unsigned counter,
+                     Cortical_Column& Col,
+                     Sleep_Regulation& SR,
+                     std::vector<double*> pData) {
     pData[0][counter] = Col.Vp		[0];
-	pData[1][counter] = Col.Vi		[0];
-	pData[2][counter] = SR.f_W		[0];
-	pData[3][counter] = SR.f_N		[0];
-	pData[4][counter] = SR.f_R		[0];
-	pData[5][counter] = SR.C_E		[0];
-	pData[6][counter] = SR.C_G		[0];
-	pData[7][counter] = SR.C_A		[0];
-	pData[8][counter] = SR.h		[0];
-	pData[9][counter] = Col.g_KNa	[0];
+    pData[1][counter] = Col.Vi		[0];
+    pData[2][counter] = SR.f_W		[0];
+    pData[3][counter] = SR.f_N		[0];
+    pData[4][counter] = SR.f_R		[0];
+    pData[5][counter] = SR.C_E		[0];
+    pData[6][counter] = SR.C_G		[0];
+    pData[7][counter] = SR.C_A		[0];
+    pData[8][counter] = SR.h		[0];
+    pData[9][counter] = Col.g_KNa	[0];
     pData[10][counter]= Col.sigma_p	[0];
 
 }
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/
