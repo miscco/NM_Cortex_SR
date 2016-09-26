@@ -166,7 +166,7 @@ private:
 
     /* Declaration and initialization of variables */
     /* Random number generators */
-    std::vector<random_stream_normal> MTRands;
+    std::vector<randomStreamNormal> MTRands;
 
     /* Container for noise */
     std::vector<double>	Rand_vars;
