@@ -16,6 +16,9 @@ HEADERS +=  Cortical_Column.h   \
             Random_Stream.h     \
             Sleep_Regulation.h
 
-QMAKE_CXXFLAGS += -std=c++11 -O3
+QMAKE_CXXFLAGS += -std=c++11 
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE *= -O3
 
 SOURCES -= Cortex_SR_mex.cpp
