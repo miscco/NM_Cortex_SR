@@ -128,7 +128,7 @@ private:
     C_A		= init(1E-3),	/* Acetylcholin concentration in [aU] 	*/
     h		= init(0.5);	/* Homeostatic sleep drive	in [aU] 	*/
     /* Data storage  access */
-    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>);
+    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>&);
     friend class Cortical_Column;
 };
 
