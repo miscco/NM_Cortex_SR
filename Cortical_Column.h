@@ -190,7 +190,7 @@ private:
                         sigma_p	= init(sigma_p_0);	/* Inverse neural gain								*/
 
     /* Data storage  access */
-    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>);
+    friend void get_data (unsigned, Cortical_Column&, Sleep_Regulation&, std::vector<double*>&);
 };
 /****************************************************************************************************/
 /*										 		end			 										*/
