@@ -93,7 +93,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     /* Pointer to the data blocks */
     std::vector<double*> dataPointer;
     dataPointer.reserve(dataArray.size());
-    for (auto &dataptr : dataArray) {
+    for (mxArray* ataptr : dataArray) {
         dataPointer.push_back(mxGetPr(dataptr));
     }
 
@@ -109,7 +109,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Return the data containers */
     size_t numOutputs = 0;
-    for (auto &dataptr : dataArray) {
+    for (mxArray* dataptr : dataArray) {
         plhs[numOutputs++] = dataptr;
     }
 
